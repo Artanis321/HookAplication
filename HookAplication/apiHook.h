@@ -6,7 +6,7 @@
 //Struktura obsahujuca zaznam o hook-ovani
 struct hook_structure {	
 	bool	isHooked;
-	void*	FuncionAddress;
+	void*	FunctionAddress;
 	void*	HookAddress;
 	char	Jmp[6];
 	char	OriginalBytes[6];
@@ -31,8 +31,8 @@ namespace hook {
 			return false;
 		}
 		Hook->Jmp[0] = 0xe9;
-		*(PULONG)&Hook->Jmp[1] = (ULONG)HookFuncion - (ULONG)Hook->FuncionAddress - 5;
-		memcpy(Hook->OriginalBytes, Hook->FuncionAddress, 5);
+		*(PULONG)&Hook->Jmp[1] = (ULONG)HookFuncion - (ULONG)Hook->FunctionAddress - 5;
+		memcpy(Hook->OriginalBytes, Hook->FunctionAddress, 5);
 		Hook->OriginalFuncion = VirtualAlloc(0, 4096, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 		
 		if (Hook->OriginalFuncion == NULL) {
@@ -47,15 +47,39 @@ namespace hook {
 		return true;
 	}
 
+	bool InitializeByAddress(hook_structure* Hook, void* Address, void* HookFunction) {
+		ULONG OrigFunction, FunctionAddress;
+		char opcodes[] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0xe9, 0x00, 0x00, 0x00, 0x00 };
+		if (Hook->isHooked) {
+			return false;
+		}
+		Hook->FunctionAddress = Address;
+		Hook->Jmp[0] = 0xe9;
+
+		*(PULONG)&Hook->Jmp[1] = (ULONG)HookFunction - (ULONG)Hook->FunctionAddress - 5;
+		memcpy(Hook->OriginalBytes, Hook->FunctionAddress, 5);
+
+		Hook->OriginalFuncion = VirtualAlloc(NULL, 4096, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+		memcpy(Hook->OriginalFuncion, Hook->OriginalBytes, 5);
+
+		OrigFunction = (ULONG)Hook->OriginalFuncion + 5;
+		FunctionAddress = (ULONG)Hook->FunctionAddress + 5;
+
+		*(LPBYTE)((LPBYTE)Hook->OriginalFuncion + 5) = 0xe9;
+		*(PULONG)((LPBYTE)Hook->OriginalFuncion + 6) = (ULONG)FunctionAddress - (ULONG)OrigFunction - 5;
+		Hook->isHooked = true;
+		return true;
+	}
+
 	bool InsertHook(hook_structure* Hook) {
 		DWORD operation;
 		if (!Hook->isHooked) {
 			return false;
 		}
 
-		VirtualProtect(Hook->FuncionAddress, 5, PAGE_EXECUTE_READWRITE, &operation);
-		memcpy(Hook->FuncionAddress, Hook->Jmp, 5);
-		VirtualProtect(Hook->FuncionAddress, 5, operation, &operation);
+		VirtualProtect(Hook->FunctionAddress, 5, PAGE_EXECUTE_READWRITE, &operation);
+		memcpy(Hook->FunctionAddress, Hook->Jmp, 5);
+		VirtualProtect(Hook->FunctionAddress, 5, operation, &operation);
 		return true;
 	}
 
@@ -65,9 +89,9 @@ namespace hook {
 			return false;
 		}
 
-		VirtualProtect(Hook->FuncionAddress, 5, PAGE_EXECUTE_READWRITE, &operation);
-		memcpy(Hook->FuncionAddress, Hook->OriginalBytes, 5);
-		VirtualProtect(Hook->FuncionAddress, 5, operation, &operation);
+		VirtualProtect(Hook->FunctionAddress, 5, PAGE_EXECUTE_READWRITE, &operation);
+		memcpy(Hook->FunctionAddress, Hook->OriginalBytes, 5);
+		VirtualProtect(Hook->FunctionAddress, 5, operation, &operation);
 		Hook->isHooked = false;
 		return true;
 	}

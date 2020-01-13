@@ -8,6 +8,15 @@
 
 using namespace hook;
 
+typedef BOOL(WINAPI* pDeleteFileA)(LPCSTR lpFileName);
+
+pDeleteFileA pDeleteFile;
+hook_structure Hook;
+
+BOOL WINAPI HookDeleteFileA(LPCSTR lpFileName) {
+
+}
+
 int main()
 {
     std::cout << "Hello World!\n";
