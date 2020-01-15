@@ -12,11 +12,26 @@ typedef BOOL(WINAPI* pDeleteFileA)(LPCSTR lpFileName);
 
 pDeleteFileA pDeleteFile;
 hook_structure Hook;
+/*
+BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
+{
+	if (dwReason == DLL_PROCESS_ATTACH)
+	{
+		InitializeHook(&Hook, "kernel32.dll", "ReadProcessMemory", HookWriteProcessMemory);
+		InitializeHook(&Hook, "kernel32.dll", "WriteProcessMemory", HookWriteProcessMemory);
 
-BOOL WINAPI HookDeleteFileA(LPCSTR lpFileName) {
-
+		hookRpm = (fReadProcessMemory)Hook.APIFunction;
+		hookWpm = (fWriteProcessMemory)Hook.APIFunction;
+		InsertHook(&Hook);
+	}
+	else if (dwReason == DLL_PROCESS_DETACH)
+	{
+		Unhook(&Hook);
+		FreeHook(&Hook);
+	}
+	return TRUE;
 }
-
+*/
 int main()
 {
     std::cout << "Hello World!\n";
