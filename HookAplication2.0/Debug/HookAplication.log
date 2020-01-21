@@ -1,0 +1,24 @@
+﻿  HookAplication.cpp
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\apiHook.h(33,18): warning C4309: '=': truncation of constant value
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\apiHook.h(52,22): warning C4838: conversion from 'int' to 'char' requires a narrowing conversion
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\apiHook.h(52,22): warning C4309: 'initializing': truncation of constant value
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\apiHook.h(52,28): warning C4838: conversion from 'int' to 'char' requires a narrowing conversion
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\apiHook.h(52,28): warning C4309: 'initializing': truncation of constant value
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\apiHook.h(52,34): warning C4838: conversion from 'int' to 'char' requires a narrowing conversion
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\apiHook.h(52,34): warning C4309: 'initializing': truncation of constant value
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\apiHook.h(52,40): warning C4838: conversion from 'int' to 'char' requires a narrowing conversion
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\apiHook.h(52,40): warning C4309: 'initializing': truncation of constant value
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\apiHook.h(52,46): warning C4838: conversion from 'int' to 'char' requires a narrowing conversion
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\apiHook.h(52,46): warning C4309: 'initializing': truncation of constant value
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\apiHook.h(52,52): warning C4838: conversion from 'int' to 'char' requires a narrowing conversion
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\apiHook.h(52,52): warning C4309: 'initializing': truncation of constant value
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\apiHook.h(57,18): warning C4309: '=': truncation of constant value
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\ApiHookFunction.h(30,6): error C2664: 'int strcmp(const char *,const char *)': cannot convert argument 1 from 'WCHAR [260]' to 'const char *'
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\ApiHookFunction.h(30,20): message : Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
+C:\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(100,13): message : see declaration of 'strcmp'
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\HookAplication.cpp(19,84): error C2664: 'bool hook::InitializeHook(hook_structure *,char *,char *,void *)': cannot convert argument 2 from 'const char [13]' to 'char *'
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\HookAplication.cpp(19,25): message : Conversion from string literal loses const qualifier (see /Zc:strictStrings)
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\apiHook.h(19,7): message : see declaration of 'hook::InitializeHook'
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\HookAplication.cpp(20,85): error C2664: 'bool hook::InitializeHook(hook_structure *,char *,char *,void *)': cannot convert argument 2 from 'const char [13]' to 'char *'
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\HookAplication.cpp(20,25): message : Conversion from string literal loses const qualifier (see /Zc:strictStrings)
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\apiHook.h(19,7): message : see declaration of 'hook::InitializeHook'

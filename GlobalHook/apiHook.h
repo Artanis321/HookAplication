@@ -72,6 +72,10 @@ namespace hook {
 	}
 
 	bool InsertHook(hook_structure* Hook) {
+
+		SetLastError(ERROR_ACCESS_DENIED);
+		MessageBoxA(0, "HookedFunction" + Hook->OriginalFuncion, "Error!", 0);
+		/*
 		DWORD operation;
 		if (!Hook->isHooked) {
 			return false;
@@ -80,6 +84,7 @@ namespace hook {
 		VirtualProtect(Hook->FunctionAddress, 5, PAGE_EXECUTE_READWRITE, &operation);
 		memcpy(Hook->FunctionAddress, Hook->Jmp, 5);
 		VirtualProtect(Hook->FunctionAddress, 5, operation, &operation);
+		*/
 		return true;
 	}
 
