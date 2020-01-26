@@ -12,7 +12,7 @@ int writeFile(string processID, string originalFuncion) {
 	tm* ltm = localtime(&now);
 	ofstream myFile;
 	myFile.open("hookAplicationResault.txt");
-	myFile << 1 + ltm->tm_hour << ":" << 1 + ltm->tm_min << ":" << 1 + ltm->tm_sec << ";" + processID + ";" + originalFuncion + ";";
+	myFile << 1 + ltm->tm_hour << ":" << 1 + ltm->tm_min << ":" << 1 + ltm->tm_sec << ";" + processID + ";" + originalFuncion + ";" << endl;
 	myFile.close();
 	return 0;
 
