@@ -1,5 +1,0 @@
-﻿  HookAplication.cpp
-D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\apiHook.h(28,35): error C2664: 'HMODULE GetModuleHandleW(LPCWSTR)': cannot convert argument 1 from 'char *' to 'LPCWSTR'
-D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\apiHook.h(28,29): message : Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
-C:\Windows Kits\10\Include\10.0.18362.0\um\libloaderapi.h(269,1): message : see declaration of 'GetModuleHandleW'
-D:\App Windows\Visual Studio 2019\Projekty\HookAplication\HookAplication\apiHook.h(33,18): warning C4309: '=': truncation of constant value
