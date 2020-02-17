@@ -1,8 +1,0 @@
-﻿  pch.cpp
-  dllmain.cpp
-  mhook.cpp
-  Generating Code...
-mhook.obj : error LNK2019: unresolved external symbol _InitDisassembler referenced in function "unsigned long __cdecl DisassembleAndSkip(void *,unsigned long,struct MHOOKS_PATCHDATA *)" (?DisassembleAndSkip@@YAKPAXKPAUMHOOKS_PATCHDATA@@@Z)
-mhook.obj : error LNK2019: unresolved external symbol _CloseDisassembler referenced in function "unsigned long __cdecl DisassembleAndSkip(void *,unsigned long,struct MHOOKS_PATCHDATA *)" (?DisassembleAndSkip@@YAKPAXKPAUMHOOKS_PATCHDATA@@@Z)
-mhook.obj : error LNK2019: unresolved external symbol _GetInstruction referenced in function "unsigned long __cdecl DisassembleAndSkip(void *,unsigned long,struct MHOOKS_PATCHDATA *)" (?DisassembleAndSkip@@YAKPAXKPAUMHOOKS_PATCHDATA@@@Z)
-D:\App Windows\Visual Studio 2019\Projekty\test\Debug\test.dll : fatal error LNK1120: 3 unresolved externals
