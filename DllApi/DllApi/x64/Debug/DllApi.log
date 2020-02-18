@@ -1,0 +1,18 @@
+﻿  pch.cpp
+  cpu.c
+  disasm.c
+  disasm_x86.c
+D:\App Windows\Visual Studio 2019\Projekty\DllApi\DllApi\disasm-lib\disasm_x86.c(3740,34): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 2 has type 'int'
+D:\App Windows\Visual Studio 2019\Projekty\DllApi\DllApi\disasm-lib\disasm_x86.c(3740,34): warning C4313: 'printf': '%s' in format string conflicts with argument 2 of type 'int'
+D:\App Windows\Visual Studio 2019\Projekty\DllApi\DllApi\disasm-lib\disasm_x86.c(3740,152): warning C4474: 'printf' : too many arguments passed for format string
+D:\App Windows\Visual Studio 2019\Projekty\DllApi\DllApi\disasm-lib\disasm_x86.c(3740,152): message : placeholders and their parameters expect 2 variadic arguments, but 3 were provided
+D:\App Windows\Visual Studio 2019\Projekty\DllApi\DllApi\disasm-lib\disasm_x86.c(3767,34): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 2 has type 'int'
+D:\App Windows\Visual Studio 2019\Projekty\DllApi\DllApi\disasm-lib\disasm_x86.c(3767,34): warning C4313: 'printf': '%s' in format string conflicts with argument 2 of type 'int'
+D:\App Windows\Visual Studio 2019\Projekty\DllApi\DllApi\disasm-lib\disasm_x86.c(3767,152): warning C4474: 'printf' : too many arguments passed for format string
+D:\App Windows\Visual Studio 2019\Projekty\DllApi\DllApi\disasm-lib\disasm_x86.c(3767,152): message : placeholders and their parameters expect 2 variadic arguments, but 3 were provided
+  misc.c
+  Generating Code...
+  dllmain.cpp
+  mhook.cpp
+  Generating Code...
+  DllApi.vcxproj -> D:\App Windows\Visual Studio 2019\Projekty\DllApi\x64\Debug\DllApi.dll
