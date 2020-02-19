@@ -39,6 +39,9 @@
     <ClInclude Include="disasm-lib\misc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ApiHookFunction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

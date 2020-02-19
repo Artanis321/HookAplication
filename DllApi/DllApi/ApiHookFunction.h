@@ -201,6 +201,22 @@ typedef HANDLE (WINAPI* fakeCreateThread)(
 	LPDWORD                 lpThreadId
 );
 
+typedef BOOL(WINAPI* fakeReadFile)(
+	HANDLE       hFile,
+	LPVOID       lpBuffer,
+	DWORD        nNumberOfBytesToRead,
+	LPDWORD      lpNumberOfBytesRead,
+	LPOVERLAPPED lpOverlapped
+	);
+
+typedef BOOL(WINAPI* fakeWriteFile)(
+	HANDLE       hFile,
+	LPCVOID      lpBuffer,
+	DWORD        nNumberOfBytesToWrite,
+	LPDWORD      lpNumberOfBytesWritten,
+	LPOVERLAPPED lpOverlapped
+	);
+
 
 
 fakeWriteProcessMemory			hookFakeWpm;
@@ -218,6 +234,8 @@ fakeCreateRemoteThreadEx		hookFakeCrRemThrEx;
 fakeCreateThread				hookFakeCrThr;
 fakeCreateProcessW				hookFakeCrProcW;
 fakeCreateProcessA				hookFakeCrProcA;
+fakeReadFile					hookFakeReadFile;
+fakeWriteFile					hookFakeWriteFile;
 
 
 
@@ -250,4 +268,28 @@ BOOL WINAPI HookReadProcessMemory(
 
 
 	return hookFakeRpm(hProcess, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesRead); //if the parameter does not contain this string, call the original API function
+}
+
+BOOL WINAPI HookReadFile(
+	HANDLE       hFile,
+	LPVOID       lpBuffer,
+	DWORD        nNumberOfBytesToRead,
+	LPDWORD      lpNumberOfBytesRead,
+	LPOVERLAPPED lpOverlapped
+	) 
+{
+	writeFile(GetProcessId(hFile), "ReadFile");
+	return hookFakeReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
+}
+
+BOOL WINAPI HookWriteFile(
+	HANDLE       hFile,
+	LPCVOID      lpBuffer,
+	DWORD        nNumberOfBytesToWrite,
+	LPDWORD      lpNumberOfBytesWritten,
+	LPOVERLAPPED lpOverlapped
+)
+{
+	writeFile(GetProcessId(hFile), "WriteFile");
+	return hookFakeWriteFile(hFile, lpBuffer, nNumberOfBytesToWrite, lpNumberOfBytesWritten, lpOverlapped);
 }

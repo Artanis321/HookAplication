@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ApiHookFunction.h" />
     <ClInclude Include="disasm-lib\cpu.h" />
     <ClInclude Include="disasm-lib\disasm.h" />
     <ClInclude Include="disasm-lib\disasm_x86.h" />
