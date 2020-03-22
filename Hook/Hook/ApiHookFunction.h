@@ -5,20 +5,23 @@
 #include <time.h>
 #include <fstream>
 #include <string>
+#include <mutex>
 
 using namespace std;
 #define _CRT_SECURE_NO_WARNINGS
 #pragma warning(disable : 4996)
+mutex mut;
 
 int writeFile(string originalFuncion) {
 
 	time_t now = time(NULL);
 	tm* ltm = localtime(&now);
+	mut.lock();
 	ofstream myFile;
 	myFile.open("C:\\hookAplicationResult.txt", ofstream::app);
 	myFile << 1 + ltm->tm_hour << ":" << 1 + ltm->tm_min << ":" << 1 + ltm->tm_sec << ";" + originalFuncion + ";" << endl;
 	myFile.close();
-
+	mut.unlock();
 	return 0;
 
 }
