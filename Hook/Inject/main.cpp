@@ -5,10 +5,20 @@ int main(int argc, char* argv[])
 {
 	LPSTARTUPINFO startupInfo = new STARTUPINFO();
 	LPPROCESS_INFORMATION processInfo = new PROCESS_INFORMATION();
-	const char* dll_path = "Hook.dll";
+	const char* dll_path = "D:\\App Windows\\Visual Studio 2019\\Projekty\\HookDetours\\Hook\\x64\\Debug\\Hook.dll";
 	DWORD thread_id = 0;
+	
+	HANDLE mutexOnThreadSafe;
+	mutexOnThreadSafe = CreateMutex(
+		NULL,
+		FALSE,
+		TEXT("MutexOnThreadSafe"));
+	if (mutexOnThreadSafe != NULL)
+	{
+		std::cout << "Mutex created" << std::endl;
+	}
 
-	if (!CreateProcess(TEXT("RFApp.exe"), NULL, NULL, NULL, TRUE, CREATE_SUSPENDED, NULL, NULL, startupInfo, processInfo))
+	if (!CreateProcess(TEXT("D:\\App Windows\\Visual Studio 2019\\Projekty\\HookDetours\\Hook\\x64\\Debug\\RFApp.exe"), NULL, NULL, NULL, TRUE, CREATE_SUSPENDED, NULL, NULL, startupInfo, processInfo))
 	{
 		std::cout << "Nepodarilo sa spustit RFApp.exe" << std::endl;
 		return -1;
@@ -52,6 +62,7 @@ int main(int argc, char* argv[])
 	ret = ResumeThread(processInfo->hThread);
 	std::cout << "Return ResumeThread " << ret << std::endl;
 	CloseHandle(remote);
+	//CloseHandle(mutexOnThreadSafe);
 
 	return 0;
 }
