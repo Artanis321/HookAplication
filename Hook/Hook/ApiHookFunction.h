@@ -6,21 +6,29 @@
 #include <fstream>
 #include <string>
 #include <mutex>
+#include <stdlib.h>
 
 using namespace std;
 #define _CRT_SECURE_NO_WARNINGS
 #pragma warning(disable : 4996)
 
+HANDLE hMutex = OpenMutex(MUTEX_ALL_ACCESS, NULL, TEXT("MutexOnThreadSafe"));
+
 int writeFile(string originalFuncion) {
-	HANDLE hMutex;
-	hMutex = OpenMutex(MUTEX_ALL_ACCESS, NULL, TEXT("MutexOnThreadSafe"));
+	
+	DWORD ret = WaitForSingleObject(hMutex, INFINITE);
 	time_t now = time(NULL);
 	tm* ltm = localtime(&now);
 	ofstream myFile;
 	myFile.open("hookAplicationResult.txt", ofstream::app);
 	myFile << ltm->tm_hour << ":" << ltm->tm_min << ":" << ltm->tm_sec << ";" + originalFuncion + ";" << endl;
 	myFile.close();
-	cout << "Write to file" << endl;
+	//cout << "Write to file" << endl;
+	if (hMutex != NULL)
+	{
+		cout << "Mutex exist "<< endl;
+	}
+	cin.ignore();
 	CloseHandle(hMutex);
 	return 0;
 
@@ -39,204 +47,7 @@ static BOOL(*RealWriteFile)(HANDLE, LPCVOID, DWORD, LPDWORD, LPOVERLAPPED) = Wri
 static HANDLE(*RealOpenProcess)(DWORD, BOOL, DWORD) = OpenProcess;
 static HANDLE(*RealOpenThread)(DWORD, BOOL, DWORD) = OpenThread;
 static DWORD(*RealResumeThread)(HANDLE) = ResumeThread;
-
-typedef BOOL(WINAPI* fakeWriteProcessMemory)(
-	_In_  HANDLE  hProcess,
-	_In_  LPVOID  lpBaseAddress,
-	_In_  LPCVOID lpBuffer,
-	_In_  SIZE_T  nSize,
-	_Out_ SIZE_T* lpNumberOfBytesWritten
-	);
-typedef BOOL(WINAPI* fakeReadProcessMemory)(
-	_In_  HANDLE  hProcess,
-	_In_  LPCVOID lpBaseAddress,
-	_Out_ LPVOID  lpBuffer,
-	_In_  SIZE_T  nSize,
-	_Out_ SIZE_T* lpNumberOfBytesRead
-	);
-
-typedef LPVOID (WINAPI* fakeVirtualAllocEx)(
-	_In_ HANDLE hProcess,
-	_In_ LPVOID lpAddress,
-	_In_ SIZE_T dwSize,
-	_In_ DWORD  flAllocationType,
-	_In_ DWORD  flProtect
-);
-
-typedef LPVOID(WINAPI* fakeVirtualAlloc)(
-	_In_ LPVOID lpAddress,
-	_In_ SIZE_T dwSize,
-	_In_ DWORD  flAllocationType,
-	_In_ DWORD  flProtect
-);
-
-typedef PVOID(WINAPI* fakeVirtualAllocFromApp)(
-	PVOID  BaseAddress,
-	SIZE_T Size,
-	ULONG  AllocationType,
-	ULONG  Protection
-);
-
-typedef PVOID(WINAPI* fakeVirtualAlloc2)(
-	HANDLE                 Process,
-	PVOID                  BaseAddress,
-	SIZE_T                 Size,
-	ULONG                  AllocationType,
-	ULONG                  PageProtection,
-	MEM_EXTENDED_PARAMETER* ExtendedParameters,
-	ULONG                  ParameterCount
-);
-
-typedef PVOID(WINAPI* fakeVirtualAlloc2FromApp)(
-	HANDLE                 Process,
-	PVOID                  BaseAddress,
-	SIZE_T                 Size,
-	ULONG                  AllocationType,
-	ULONG                  PageProtection,
-	MEM_EXTENDED_PARAMETER* ExtendedParameters,
-	ULONG                  ParameterCount
-);
-
-typedef HANDLE(WINAPI* fakeOpenProcess)(
-	DWORD dwDesiredAccess,
-	BOOL  bInheritHandle,
-	DWORD dwProcessId
-);
-
-typedef HANDLE (WINAPI* fakeOpenThread)(
-	DWORD dwDesiredAccess,
-	BOOL  bInheritHandle,
-	DWORD dwThreadId
-);
-
-typedef HANDLE (WINAPI* fakeCreateThread)(
-	LPSECURITY_ATTRIBUTES   lpThreadAttributes,
-	SIZE_T                  dwStackSize,
-	LPTHREAD_START_ROUTINE  lpStartAddress,
-	__drv_aliasesMem LPVOID lpParameter,
-	DWORD                   dwCreationFlags,
-	LPDWORD                 lpThreadId
-);
-
-typedef HANDLE(WINAPI* fakeCreateRemoteThread)(
-	HANDLE                 hProcess,
-	LPSECURITY_ATTRIBUTES  lpThreadAttributes,
-	SIZE_T                 dwStackSize,
-	LPTHREAD_START_ROUTINE lpStartAddress,
-	LPVOID                 lpParameter,
-	DWORD                  dwCreationFlags,
-	LPDWORD                lpThreadId
-);
-
-typedef void (WINAPI* fakeExitThread)(
-	DWORD dwExitCode
-);
-
-typedef void (WINAPI* fakeExitProcess)(
-	UINT uExitCode
-);
-
-typedef HANDLE (WINAPI* fakeOpenThread)(
-	DWORD dwDesiredAccess,
-	BOOL  bInheritHandle,
-	DWORD dwThreadId
-);
-
-typedef DWORD (WINAPI* fakeResumeThread)(
-	HANDLE hThread
-);
-
-typedef BOOL (WINAPI* fakeSetThreadPriority)(
-	HANDLE hThread,
-	int    nPriority
-);
-
-//typedef BOOL (WINAPI* fakeSwitchToThread());
-
-typedef BOOL (WINAPI* fakeTerminateProcess)(
-	HANDLE hProcess,
-	UINT   uExitCode
-);
-
-typedef BOOL (WINAPI* fakeTerminateThread)(
-	HANDLE hThread,
-	DWORD  dwExitCode
-);
-
-typedef BOOL (WINAPI* fakeCreateProcessA)(
-	LPCSTR                lpApplicationName,
-	LPSTR                 lpCommandLine,
-	LPSECURITY_ATTRIBUTES lpProcessAttributes,
-	LPSECURITY_ATTRIBUTES lpThreadAttributes,
-	BOOL                  bInheritHandles,
-	DWORD                 dwCreationFlags,
-	LPVOID                lpEnvironment,
-	LPCSTR                lpCurrentDirectory,
-	LPSTARTUPINFOA        lpStartupInfo,
-	LPPROCESS_INFORMATION lpProcessInformation
-);
-
-typedef BOOL (WINAPI* fakeCreateProcessW)(
-	LPCWSTR               lpApplicationName,
-	LPWSTR                lpCommandLine,
-	LPSECURITY_ATTRIBUTES lpProcessAttributes,
-	LPSECURITY_ATTRIBUTES lpThreadAttributes,
-	BOOL                  bInheritHandles,
-	DWORD                 dwCreationFlags,
-	LPVOID                lpEnvironment,
-	LPCWSTR               lpCurrentDirectory,
-	LPSTARTUPINFOW        lpStartupInfo,
-	LPPROCESS_INFORMATION lpProcessInformation
-);
-
-typedef HANDLE(WINAPI* fakeCreateRemoteThread)(
-	HANDLE                 hProcess,
-	LPSECURITY_ATTRIBUTES  lpThreadAttributes,
-	SIZE_T                 dwStackSize,
-	LPTHREAD_START_ROUTINE lpStartAddress,
-	LPVOID                 lpParameter,
-	DWORD                  dwCreationFlags,
-	LPDWORD                lpThreadId
-);
-
-typedef HANDLE (WINAPI* fakeCreateRemoteThreadEx)(
-	HANDLE                       hProcess,
-	LPSECURITY_ATTRIBUTES        lpThreadAttributes,
-	SIZE_T                       dwStackSize,
-	LPTHREAD_START_ROUTINE       lpStartAddress,
-	LPVOID                       lpParameter,
-	DWORD                        dwCreationFlags,
-	LPPROC_THREAD_ATTRIBUTE_LIST lpAttributeList,
-	LPDWORD                      lpThreadId
-);
-
-typedef HANDLE (WINAPI* fakeCreateThread)(
-	LPSECURITY_ATTRIBUTES   lpThreadAttributes,
-	SIZE_T                  dwStackSize,
-	LPTHREAD_START_ROUTINE  lpStartAddress,
-	__drv_aliasesMem LPVOID lpParameter,
-	DWORD                   dwCreationFlags,
-	LPDWORD                 lpThreadId
-);
-
-typedef BOOL(WINAPI* fakeReadFile)(
-	HANDLE       hFile,
-	LPVOID       lpBuffer,
-	DWORD        nNumberOfBytesToRead,
-	LPDWORD      lpNumberOfBytesRead,
-	LPOVERLAPPED lpOverlapped
-	);
-
-typedef BOOL(WINAPI* fakeWriteFile)(
-	HANDLE       hFile,
-	LPCVOID      lpBuffer,
-	DWORD        nNumberOfBytesToWrite,
-	LPDWORD      lpNumberOfBytesWritten,
-	LPOVERLAPPED lpOverlapped
-	);
-
-
-
+/*
 fakeWriteProcessMemory			hookFakeWpm;
 fakeReadProcessMemory			hookFakeRpm;
 fakeVirtualAllocEx				hookFakeVAllEx;
@@ -254,7 +65,7 @@ fakeCreateProcessW				hookFakeCrProcW;
 fakeCreateProcessA				hookFakeCrProcA;
 fakeReadFile					hookFakeReadFile;
 fakeWriteFile					hookFakeWriteFile;
-
+*/
 
 
 //this will replace the DeleteFileA function in our target process
@@ -271,7 +82,7 @@ BOOL WINAPI HookWriteProcessMemory(
 	writeFile("WriteProcessMemory");
 
 	//musi vravcat originalnu funkciu
-	return WriteProcessMemory(hProcess, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesWritten); //if the parameter does not contain this string, call the original API function
+	return RealWriteProcessMemory(hProcess, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesWritten); //if the parameter does not contain this string, call the original API function
 }
 
 BOOL WINAPI HookReadProcessMemory(
@@ -285,7 +96,7 @@ BOOL WINAPI HookReadProcessMemory(
 	writeFile("ReadProcessMemory");
 
 
-	return ReadProcessMemory(hProcess, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesRead); //if the parameter does not contain this string, call the original API function
+	return RealReadProcessMemory(hProcess, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesRead); //if the parameter does not contain this string, call the original API function
 }
 
 BOOL WINAPI HookReadFile(
@@ -297,7 +108,7 @@ BOOL WINAPI HookReadFile(
 	) 
 {
 	writeFile("ReadFile");
-	return hookFakeReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
+	return RealReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
 }
 
 BOOL WINAPI HookWriteFile(
@@ -309,7 +120,7 @@ BOOL WINAPI HookWriteFile(
 )
 {
 	writeFile("WriteFile");
-	return hookFakeWriteFile(hFile, lpBuffer, nNumberOfBytesToWrite, lpNumberOfBytesWritten, lpOverlapped);
+	return RealWriteFile(hFile, lpBuffer, nNumberOfBytesToWrite, lpNumberOfBytesWritten, lpOverlapped);
 }
 
 LPVOID WINAPI HookVirtualAllocEx(
@@ -321,7 +132,7 @@ LPVOID WINAPI HookVirtualAllocEx(
 )
 {
 	writeFile("VirtualAllocEx");
-	return hookFakeVAllEx(hProcess, lpAddress, dwSize, flAllocationType, flProtect);
+	return RealVirtualAllocEx(hProcess, lpAddress, dwSize, flAllocationType, flProtect);
 }
 
 LPVOID WINAPI HookVirtualAlloc(
@@ -331,7 +142,7 @@ LPVOID WINAPI HookVirtualAlloc(
 	_In_ DWORD  flProtect
 )
 {
-	return NULL;
+	return RealVirtualAlloc(lpAddress, dwSize, flAllocationType, flProtect);
 }
 HANDLE WINAPI HookCreateRemoteThread(
 	HANDLE                 hProcess,
@@ -344,7 +155,7 @@ HANDLE WINAPI HookCreateRemoteThread(
 )
 {
 	writeFile("CreateRemoteThread");
-	return hookFakeCrRemThr(hProcess, lpThreadAttributes, dwStackSize, lpStartAddress, lpParameter, dwCreationFlags, lpThreadId);
+	return RealCreateRemoteThread(hProcess, lpThreadAttributes, dwStackSize, lpStartAddress, lpParameter, dwCreationFlags, lpThreadId);
 }
 
 HANDLE WINAPI HookCreateRemoteThreadEx(
@@ -359,7 +170,7 @@ HANDLE WINAPI HookCreateRemoteThreadEx(
 )
 {
 	writeFile("CreateRemoteThreadEx");
-	return hookFakeCrRemThrEx(hProcess, lpThreadAttributes, dwStackSize, lpStartAddress, lpParameter, dwCreationFlags, lpAttributeList, lpThreadId);
+	return RealCreateRemoteThreadEx(hProcess, lpThreadAttributes, dwStackSize, lpStartAddress, lpParameter, dwCreationFlags, lpAttributeList, lpThreadId);
 }
 
 HANDLE WINAPI HookOpenProcess(
@@ -369,7 +180,7 @@ HANDLE WINAPI HookOpenProcess(
 )
 {
 	writeFile("OpenProcess");
-	return hookFakeOpenProc(dwDesiredAccess, bInheritHandle, dwProcessId);
+	return RealOpenProcess(dwDesiredAccess, bInheritHandle, dwProcessId);
 }
 
 PVOID WINAPI HookVirtualAlloc2(
@@ -383,7 +194,8 @@ PVOID WINAPI HookVirtualAlloc2(
 )
 {
 	writeFile("VirtualAlloc2");
-	return hookFakeVAll2(Process, BaseAddress, Size, AllocationType, PageProtection, ExtendedParameters, ParameterCount);
+	return NULL;
+	//return RealVirtualAlloc2(Process, BaseAddress, Size, AllocationType, PageProtection, ExtendedParameters, ParameterCount);
 }
 
 HANDLE WINAPI HookOpenThread(
@@ -393,7 +205,7 @@ HANDLE WINAPI HookOpenThread(
 )
 {
 	writeFile("OpenThread");
-	return hookFakeOpenThr(dwDesiredAccess, bInheritHandle, dwThreadId);
+	return RealOpenThread(dwDesiredAccess, bInheritHandle, dwThreadId);
 }
 
 DWORD WINAPI HookResumeThread(
@@ -401,5 +213,5 @@ DWORD WINAPI HookResumeThread(
 )
 {
 	writeFile("ResumeThread");
-	return hookFakeResThr(hThread);
+	return RealResumeThread(hThread);
 }
