@@ -7,6 +7,10 @@ int main(int argc, char* argv[])
 	LPPROCESS_INFORMATION processInfo = new PROCESS_INFORMATION();
 	const char* dll_path = "D:\\App Windows\\Visual Studio 2019\\Projekty\\HookDetours\\Hook\\x64\\Debug\\Hook.dll";
 	DWORD thread_id = 0;
+	HFILE hFile;
+	char buffer_read[60];
+	DWORD bytes_read = 0;
+
 	
 	HANDLE mutexOnThreadSafe;
 	mutexOnThreadSafe = CreateMutex(
@@ -60,6 +64,10 @@ int main(int argc, char* argv[])
 	DWORD ret = WaitForSingleObject(remote, INFINITE);
 	std::cout << "Return WaitForSingleObject " << ret << std::endl;
 	ret = ResumeThread(processInfo->hThread);
+	OFSTRUCT buffer;
+	hFile = OpenFile("test.txt", &buffer, OF_READ);
+	ReadFile((HANDLE) hFile, buffer_read, 5, &bytes_read, NULL);
+	std::cout << buffer_read;
 	std::cout << "Return ResumeThread " << ret << std::endl;
 	CloseHandle(remote);
 	//CloseHandle(mutexOnThreadSafe);

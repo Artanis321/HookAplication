@@ -38,6 +38,7 @@ static BOOL(*RealWriteProcessMemory)(HANDLE, LPVOID, LPCVOID, SIZE_T, SIZE_T*) =
 static BOOL(*RealReadProcessMemory)(HANDLE, LPCVOID, LPVOID, SIZE_T, SIZE_T*) = ReadProcessMemory;
 static LPVOID(*RealVirtualAllocEx)(HANDLE, LPVOID, SIZE_T, DWORD, DWORD) = VirtualAllocEx;
 static LPVOID(*RealVirtualAlloc)(LPVOID, SIZE_T, DWORD, DWORD) = VirtualAlloc;
+static PVOID(*RealVirtualAlloc2)(HANDLE, PVOID, SIZE_T, ULONG, ULONG, MEM_EXTENDED_PARAMETER*, ULONG) = VirtualAlloc2;
 static HANDLE(*RealCreateThread)(LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, LPVOID, DWORD, LPDWORD) = CreateThread;
 static HANDLE(*RealCreateRemoteThread)(HANDLE, LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, LPVOID, DWORD, LPDWORD) = CreateRemoteThread;
 static HANDLE(*RealCreateRemoteThreadEx)(HANDLE, LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, LPVOID, 
@@ -47,6 +48,13 @@ static BOOL(*RealWriteFile)(HANDLE, LPCVOID, DWORD, LPDWORD, LPOVERLAPPED) = Wri
 static HANDLE(*RealOpenProcess)(DWORD, BOOL, DWORD) = OpenProcess;
 static HANDLE(*RealOpenThread)(DWORD, BOOL, DWORD) = OpenThread;
 static DWORD(*RealResumeThread)(HANDLE) = ResumeThread;
+static BOOL(*RealCreateProcessA)(LPCSTR, LPSTR, LPSECURITY_ATTRIBUTES, LPSECURITY_ATTRIBUTES,
+	BOOL, DWORD, LPVOID, LPCSTR, LPSTARTUPINFOA, LPPROCESS_INFORMATION) = CreateProcessA;
+static BOOL(*RealCreateProcessW)(LPCWSTR, LPWSTR, LPSECURITY_ATTRIBUTES, LPSECURITY_ATTRIBUTES,
+	BOOL, DWORD, LPVOID, LPCWSTR, LPSTARTUPINFOW, LPPROCESS_INFORMATION) = CreateProcessW;
+static VOID(*RealExitProcess)(UINT) = ExitProcess;
+static VOID(*RealExitThread)(DWORD) = ExitThread;
+static DWORD(*RealGetThreadId)(HANDLE) = GetThreadId;
 /*
 fakeWriteProcessMemory			hookFakeWpm;
 fakeReadProcessMemory			hookFakeRpm;
@@ -77,8 +85,6 @@ BOOL WINAPI HookWriteProcessMemory(
 	_Out_ SIZE_T  *lpNumberOfBytesWritten
 	)
 {
-	//TO DO:  
-	//pridat zapis do suboru 
 	writeFile("WriteProcessMemory");
 
 	//musi vravcat originalnu funkciu
@@ -194,8 +200,7 @@ PVOID WINAPI HookVirtualAlloc2(
 )
 {
 	writeFile("VirtualAlloc2");
-	return NULL;
-	//return RealVirtualAlloc2(Process, BaseAddress, Size, AllocationType, PageProtection, ExtendedParameters, ParameterCount);
+	return RealVirtualAlloc2(Process, BaseAddress, Size, AllocationType, PageProtection, ExtendedParameters, ParameterCount);
 }
 
 HANDLE WINAPI HookOpenThread(
@@ -214,4 +219,40 @@ DWORD WINAPI HookResumeThread(
 {
 	writeFile("ResumeThread");
 	return RealResumeThread(hThread);
+}
+
+BOOL WINAPI HookCreateProcessA(
+	LPCSTR                lpApplicationName,
+	LPSTR                 lpCommandLine,
+	LPSECURITY_ATTRIBUTES lpProcessAttributes,
+	LPSECURITY_ATTRIBUTES lpThreadAttributes,
+	BOOL                  bInheritHandles,
+	DWORD                 dwCreationFlags,
+	LPVOID                lpEnvironment,
+	LPCSTR                lpCurrentDirectory,
+	LPSTARTUPINFOA        lpStartupInfo,
+	LPPROCESS_INFORMATION lpProcessInformation
+)
+{
+	writeFile("CreateProcessA");
+	return  RealCreateProcessA(lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles,
+		dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
+}
+
+BOOL WINAPI HookCreateProcessW(
+	LPCWSTR               lpApplicationName,
+	LPWSTR                lpCommandLine,
+	LPSECURITY_ATTRIBUTES lpProcessAttributes,
+	LPSECURITY_ATTRIBUTES lpThreadAttributes,
+	BOOL                  bInheritHandles,
+	DWORD                 dwCreationFlags,
+	LPVOID                lpEnvironment,
+	LPCWSTR               lpCurrentDirectory,
+	LPSTARTUPINFOW        lpStartupInfo,
+	LPPROCESS_INFORMATION lpProcessInformation
+)
+{
+	writeFile("CreateProcessW");
+	return RealCreateProcessW(lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles,
+		dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
 }

@@ -1,2 +1,3 @@
 ﻿  main.cpp
+D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\Inject\main.cpp(69,25): warning C4312: 'type cast': conversion from 'HFILE' to 'HANDLE' of greater size
   Inject.vcxproj -> D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\x64\Debug\Inject.exe
