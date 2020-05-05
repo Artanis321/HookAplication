@@ -12,6 +12,7 @@ ReadFile;
 ReadFile;
 CopyMemory;
 CloseHandle;
+CreateThread;
 WriteFile;
 ReadFile;
 ReadFile;

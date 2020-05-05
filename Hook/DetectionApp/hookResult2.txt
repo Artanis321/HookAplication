@@ -16,6 +16,7 @@ WriteFile;
 ReadFile;
 ReadFile;
 VirtualAlloc;
+CreateThread;
 GetThreadContext;
 CloseHandle;
 ResumeThread;

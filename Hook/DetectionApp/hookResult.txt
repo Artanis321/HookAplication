@@ -1,5 +1,6 @@
 CreateThread;
 VirtualAlloc;
 CopyMemory;
+OpenThread;
 GetThreadContext;
 ResumeThread;

@@ -7,10 +7,13 @@
 #include <sstream>
 #include <vector>
 #include <list>
+#include <iterator>
 
 using namespace std;
 #define _CRT_SECURE_NO_WARNINGS
 
+static const string STATUS_S0 = "stav_0";
+static const string STATUS_S1 = "stav_1";
 
 class Matrix {
 private:
@@ -84,34 +87,57 @@ int main()
     string line;
     string status = "stav_0";
     string helpField = "";
-    int index = 0;
+    int row_index = 0;
+    bool flag = false;
+    bool exist = false;
     arraylist.push_back(status);
-    hookFile.open("hookResult.txt", ofstream::app);
+    hookFile.open("hookResult2.txt", ofstream::app);
     while (!hookFile.eof())
     {
         hookFile >> line;
         stringstream ss(line);
         string winAPIFuncion;
         getline(ss, winAPIFuncion, ';');
-        cout << winAPIFuncion << endl;
+        //cout << winAPIFuncion << endl;
 
         for (int j = 1; j < matrix.vector2D.size(); j++) {
             if (winAPIFuncion._Equal(matrix.vector2D[j][0]))
             {
-                cout << "Equal" << endl;
-                index = j;
+                row_index = j;
+                //cout << winAPIFuncion << endl;
+                exist = true;
             }
         }
+        if (exist) {
+            exist = false;
+            cout << "WinAPI :"<< winAPIFuncion << " New Instance :" << endl;
+            
+            for (int k = 0; k < arraylist.size(); k++) {
+                auto iter = next(arraylist.begin(), k);
+                status = *iter;
+                for (int i = 1; i < matrix.vector2D[0].size(); i++) {
+                    if (status._Equal(matrix.vector2D[0][i]))
+                    {
+                        helpField = matrix.vector2D[row_index][i];
+                        break;
+                    }
+                }
+                if (STATUS_S1._Equal(helpField) && !STATUS_S0._Equal(status) && !STATUS_S1._Equal(status))
+                {
+                    flag = true;
+                }
+                else {
 
-        for (int i = 1; i < matrix.vector2D[0].size(); i++) {
-            if (status._Equal(matrix.vector2D[0][i]))
-            {
-                helpField = matrix.vector2D[index][i];
+                    *iter = helpField;
+                    helpField = "";
+                }
+                cout << *iter << endl;
+            }
+            if (flag) {
+                arraylist.push_back(STATUS_S1);
+                flag = false;
             }
         }
-        status = helpField;
-        cout << status << endl;
-
     }
     
     //cout << "Hello World!\n";
