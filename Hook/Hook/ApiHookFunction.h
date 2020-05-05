@@ -38,7 +38,7 @@ static BOOL(*RealWriteProcessMemory)(HANDLE, LPVOID, LPCVOID, SIZE_T, SIZE_T*) =
 static BOOL(*RealReadProcessMemory)(HANDLE, LPCVOID, LPVOID, SIZE_T, SIZE_T*) = ReadProcessMemory;
 static LPVOID(*RealVirtualAllocEx)(HANDLE, LPVOID, SIZE_T, DWORD, DWORD) = VirtualAllocEx;
 static LPVOID(*RealVirtualAlloc)(LPVOID, SIZE_T, DWORD, DWORD) = VirtualAlloc;
-static PVOID(*RealVirtualAlloc2)(HANDLE, PVOID, SIZE_T, ULONG, ULONG, MEM_EXTENDED_PARAMETER*, ULONG) = VirtualAlloc2;
+//static PVOID(*RealVirtualAlloc2)(HANDLE, PVOID, SIZE_T, ULONG, ULONG, MEM_EXTENDED_PARAMETER*, ULONG) = VirtualAlloc2;
 static HANDLE(*RealCreateThread)(LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, LPVOID, DWORD, LPDWORD) = CreateThread;
 static HANDLE(*RealCreateRemoteThread)(HANDLE, LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, LPVOID, DWORD, LPDWORD) = CreateRemoteThread;
 static HANDLE(*RealCreateRemoteThreadEx)(HANDLE, LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, LPVOID, 
@@ -55,6 +55,8 @@ static BOOL(*RealCreateProcessW)(LPCWSTR, LPWSTR, LPSECURITY_ATTRIBUTES, LPSECUR
 static VOID(*RealExitProcess)(UINT) = ExitProcess;
 static VOID(*RealExitThread)(DWORD) = ExitThread;
 static DWORD(*RealGetThreadId)(HANDLE) = GetThreadId;
+static BOOL (*RealGetThreadContext)(HANDLE, LPCONTEXT) = GetThreadContext;
+
 /*
 fakeWriteProcessMemory			hookFakeWpm;
 fakeReadProcessMemory			hookFakeRpm;
@@ -188,7 +190,7 @@ HANDLE WINAPI HookOpenProcess(
 	writeFile("OpenProcess");
 	return RealOpenProcess(dwDesiredAccess, bInheritHandle, dwProcessId);
 }
-
+/*
 PVOID WINAPI HookVirtualAlloc2(
 	HANDLE                 Process,
 	PVOID                  BaseAddress,
@@ -202,7 +204,7 @@ PVOID WINAPI HookVirtualAlloc2(
 	writeFile("VirtualAlloc2");
 	return RealVirtualAlloc2(Process, BaseAddress, Size, AllocationType, PageProtection, ExtendedParameters, ParameterCount);
 }
-
+*/
 HANDLE WINAPI HookOpenThread(
 	DWORD dwDesiredAccess,
 	BOOL  bInheritHandle,

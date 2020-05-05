@@ -1,0 +1,4 @@
+﻿  pch.cpp
+  dllmain.cpp
+dllmain.obj : error LNK2001: unresolved external symbol __imp_VirtualAlloc2
+D:\App Windows\Visual Studio 2019\Projekty\HookAplication2\Hook\x64\Release\Hook.dll : fatal error LNK1120: 1 unresolved externals

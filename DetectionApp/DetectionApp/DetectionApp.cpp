@@ -35,19 +35,43 @@ private:
 public:    
     vector < vector<string> > vector2D;
     Matrix() {
-        myFile.open("hookAplicationResult.txt", ofstream::app);
+        myFile.open("configuration.txt", ofstream::app);
+        vect.push_back("Function");
+        vect.push_back("stav_0");
+        vect.push_back("stav_1");
+        vect.push_back("stav_2");
+        vect.push_back("stav_3");
+        vect.push_back("stav_4");
+        vect.push_back("stav_5");
+        vector2D.push_back(vect);
+        vect.clear();
+        int flag = 6;
         while (!myFile.eof())
         {
             myFile >> line;
             stringstream ss(line);
-
+            int index = 0;
             while (ss.good()) {
                 string substr;
                 getline(ss, substr, ';');
-                vect.push_back(substr);
+                if (index == 1 && flag == 6) {
+                    vect.push_back(substr);
+                }
+                if (index == 2) {
+
+                    vect.push_back(substr);
+                }
+                index++;
             }
-            vector2D.push_back(vect);
-            vect.clear();
+            flag--;
+
+            //index++;
+            //cout << index << endl;
+            if (flag == 0) {
+                vector2D.push_back(vect);
+                vect.clear();
+                flag = 6;
+            }
         }
         myFile.close();
     }
@@ -72,7 +96,7 @@ int main()
 
     ifstream hookFile;
     string line;
-    string status = "S_0";
+    string status = "stav_0";
     string helpField = "";
     int index = 0;
     hookFile.open("hookResult.txt", ofstream::app);
@@ -83,25 +107,24 @@ int main()
             string winAPIFuncion;
             getline(ss, winAPIFuncion, ';');
             cout << winAPIFuncion << endl;
-            for (int i = 1; i < matrix.vector2D[0].size(); i++) {
-                if (winAPIFuncion._Equal(matrix.vector2D[0][i]))
+
+            for (int j = 1; j < matrix.vector2D.size(); j++) {
+                if (winAPIFuncion._Equal(matrix.vector2D[j][0]))
                 {
                     cout << "Equal" << endl;
-                    index = i;
+                    index = j;
                 }
-                
             }
-            //cout << index << endl;
-            for (int j = 1; j < matrix.vector2D.size(); j++) {
-                if (status._Equal(matrix.vector2D[j][0]))
+
+            for (int i = 1; i < matrix.vector2D[0].size(); i++) {
+                if (status._Equal(matrix.vector2D[0][i]))
                 {
-                    //cout << index << endl;
-                    helpField = matrix.vector2D[j][index];
-                    //cout << helpField << endl;
+                    helpField = matrix.vector2D[index][i];
                 }
             }
             status = helpField;
             cout << status << endl;
+            
     }
     
 }
