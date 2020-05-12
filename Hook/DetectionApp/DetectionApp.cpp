@@ -8,6 +8,8 @@
 #include <vector>
 #include <list>
 #include <iterator>
+#include <mutex>
+#include <Windows.h>
 
 using namespace std;
 #define _CRT_SECURE_NO_WARNINGS
@@ -52,9 +54,6 @@ public:
                 index++;
             }
             flag--;
-
-            //index++;
-            //cout << index << endl;
             if (flag == 0) {
                 vector2D.push_back(vect);
                 vect.clear();
@@ -65,8 +64,84 @@ public:
     }
 };
 
+list<string> findInApi(list<string> arraylist) {
+    Matrix matrix;
+    ifstream hookFile;
+    string line;
+    string status;
+    string helpField = "";
+    int row_index = 0;
+    bool flag = false;
+    bool exist = false;
+    hookFile.open("hookResult.txt", ofstream::app);
+    while (!hookFile.eof())
+    {
+        hookFile >> line;
+        stringstream ss(line);
+        string winAPIFuncion;
+        int index = 0;
+        while (ss.good()) {
+
+            getline(ss, winAPIFuncion, ';');
+            if (index != 0) {
+                for (int row = 1; row < matrix.vector2D.size(); row++) {
+                    if (winAPIFuncion._Equal(matrix.vector2D[row][0]))
+                    {
+                        row_index = row;
+                        //cout << matrix.vector2D[row][0] << endl;
+                        exist = true;
+                    }
+                }
+                if (exist) {
+                    exist = false;
+                    cout << "WinAPI: " << winAPIFuncion << " New Instance:" << endl;
+
+                    for (int k = 0; k < arraylist.size(); k++) {
+                        auto iter = next(arraylist.begin(), k);
+                        status = *iter;
+                        for (int col = 1; col < matrix.vector2D[0].size(); col++) {
+                            if (status._Equal(matrix.vector2D[0][col]))
+                            {
+                                helpField = matrix.vector2D[row_index][col];
+                                break;
+                            }
+                        }
+                        if (STATUS_S1._Equal(helpField) && !STATUS_S0._Equal(status) && !STATUS_S1._Equal(status))
+                        {
+                            flag = true;
+                        }
+                        else {
+
+                            *iter = helpField;
+                            helpField = "";
+                        }
+                        cout << *iter << endl;
+                    }
+                    if (flag) {
+                        arraylist.push_back(STATUS_S1);
+                        flag = false;
+                    }
+                }
+            }
+            index++;
+        }
+    }
+    hookFile.close();
+    return arraylist;
+}
+
 int main()
 {
+
+    HANDLE mutexOnThreadSafe;
+    mutexOnThreadSafe = CreateMutex(
+        NULL,
+        FALSE,
+        TEXT("MutexOnThreadSafe"));
+    if (mutexOnThreadSafe != NULL)
+    {
+        std::cout << "Mutex created" << std::endl;
+    }
     
     size_t row_size;
     size_t col_size;
@@ -91,56 +166,13 @@ int main()
     bool flag = false;
     bool exist = false;
     arraylist.push_back(status);
-    hookFile.open("hookResult2.txt", ofstream::app);
-    while (!hookFile.eof())
-    {
-        hookFile >> line;
-        stringstream ss(line);
-        string winAPIFuncion;
-        getline(ss, winAPIFuncion, ';');
-        //cout << winAPIFuncion << endl;
 
-        for (int j = 1; j < matrix.vector2D.size(); j++) {
-            if (winAPIFuncion._Equal(matrix.vector2D[j][0]))
-            {
-                row_index = j;
-                //cout << winAPIFuncion << endl;
-                exist = true;
-            }
-        }
-        if (exist) {
-            exist = false;
-            cout << "WinAPI :"<< winAPIFuncion << " New Instance :" << endl;
-            
-            for (int k = 0; k < arraylist.size(); k++) {
-                auto iter = next(arraylist.begin(), k);
-                status = *iter;
-                for (int i = 1; i < matrix.vector2D[0].size(); i++) {
-                    if (status._Equal(matrix.vector2D[0][i]))
-                    {
-                        helpField = matrix.vector2D[row_index][i];
-                        break;
-                    }
-                }
-                if (STATUS_S1._Equal(helpField) && !STATUS_S0._Equal(status) && !STATUS_S1._Equal(status))
-                {
-                    flag = true;
-                }
-                else {
+    arraylist = findInApi(arraylist);
 
-                    *iter = helpField;
-                    helpField = "";
-                }
-                cout << *iter << endl;
-            }
-            if (flag) {
-                arraylist.push_back(STATUS_S1);
-                flag = false;
-            }
-        }
+    for (int k = 0; k < arraylist.size(); k++) {
+        auto iter = next(arraylist.begin(), k);
+        cout << *iter << endl;
     }
-    
-    //cout << "Hello World!\n";
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

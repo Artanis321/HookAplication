@@ -1,3 +1,5 @@
 ﻿  main.cpp
-D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\Inject\main.cpp(69,25): warning C4312: 'type cast': conversion from 'HFILE' to 'HANDLE' of greater size
+D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\Inject\main.cpp(11,8): warning C4101: 'hFile': unreferenced local variable
+D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\Inject\main.cpp(68,11): warning C4101: 'buffer': unreferenced local variable
+D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\Inject\main.cpp(12,7): warning C4101: 'buffer_read': unreferenced local variable
   Inject.vcxproj -> D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\x64\Debug\Inject.exe

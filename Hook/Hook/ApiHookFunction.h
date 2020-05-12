@@ -21,13 +21,8 @@ int writeFile(string originalFuncion) {
 	tm* ltm = localtime(&now);
 	ofstream myFile;
 	myFile.open("hookAplicationResult.txt", ofstream::app);
-	myFile << ltm->tm_hour << ":" << ltm->tm_min << ":" << ltm->tm_sec << ";" + originalFuncion + ";" << endl;
+	myFile << ltm->tm_hour << ":" << ltm->tm_min << ":" << ltm->tm_sec << ";" + originalFuncion << endl;
 	myFile.close();
-	//cout << "Write to file" << endl;
-	if (hMutex != NULL)
-	{
-		cout << "Mutex exist "<< endl;
-	}
 	cin.ignore();
 	CloseHandle(hMutex);
 	return 0;
