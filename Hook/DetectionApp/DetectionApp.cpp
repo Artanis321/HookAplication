@@ -1,6 +1,3 @@
-// DetectionApp.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -18,10 +15,7 @@ using namespace std;
 static const string STATUS_S0 = "stav_0";
 static const string STATUS_S1 = "stav_1";
 
-HANDLE mutexOnThreadSafe = CreateMutex(
-    NULL,
-    FALSE,
-    TEXT("MutexOnThreadSafe"));
+HANDLE mutexOnThreadSafe;
 
 class Matrix {
 private:
@@ -31,7 +25,7 @@ private:
 public:
     vector < vector<string> > vector2D;
     Matrix() {
-        myFile.open("D:\\App Windows\\Visual Studio 2019\\Projekty\\HookDetours\\Hook\\x64\\Debug\\configuration.txt", ofstream::app);
+       myFile.open("D:\\App Windows\\Visual Studio 2019\\Projekty\\HookDetours\\Hook\\x64\\Debug\\configuration.txt", ofstream::app);
         vect.push_back("Function");
         vect.push_back("stav_0");
         vect.push_back("stav_1");
@@ -158,6 +152,8 @@ list<string> findInApi(list<string> arraylist) {
 
 int main()
 {
+	mutexOnThreadSafe = CreateMutex(NULL, FALSE, TEXT("MutexOnThreadSafe"));
+
     if (mutexOnThreadSafe != NULL)
     {
         cout << "Mutex created" << std::endl;
@@ -183,32 +179,24 @@ int main()
     arraylist.push_back(status);
 
     thread th([&matrix, &arraylist]() {
-        while (true) {
-            this_thread::sleep_for(500ms);
-            HANDLE hMutex = OpenMutex(
-                MUTEX_ALL_ACCESS,
-                FALSE,
-                TEXT("MutexOnThreadSafe"));
+		while (true) {
+			this_thread::sleep_for(500ms); 
 
-            arraylist = findInApi(arraylist);
+			auto result = WaitForSingleObject(mutexOnThreadSafe, INFINITE);
 
-            for (int k = 0; k < arraylist.size(); k++) {
-                auto iter = next(arraylist.begin(), k);
-                cout << *iter << endl;
-            }
-            CloseHandle(hMutex);
-        }
+			if (result == WAIT_OBJECT_0)
+			{
+				arraylist = findInApi(arraylist);
+
+				for (int k = 0; k < arraylist.size(); k++) {
+					auto iter = next(arraylist.begin(), k);
+					cout << *iter << endl;
+				}
+
+				ReleaseMutex(mutexOnThreadSafe);
+			}
+		}
     });
+
     th.join();
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
