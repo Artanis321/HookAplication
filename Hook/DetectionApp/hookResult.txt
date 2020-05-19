@@ -1,6 +1,0 @@
-9:24:21;CreateThread
-9:24:22;VirtualAlloc
-9:24:23;CopyMemory
-9:24:24;GetThreadContext
-9:24:25;ResumeThread
-9:28:21;CreateThread

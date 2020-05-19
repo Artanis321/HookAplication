@@ -12,8 +12,9 @@
 using namespace std;
 #define _CRT_SECURE_NO_WARNINGS
 
-static const string STATUS_S0 = "stav_0";
-static const string STATUS_S1 = "stav_1";
+static const string STATUS_S0 = "start";
+static const string STATUS_S1 = "vytvorenie_Threadu";
+static const string STATUS_S5 = "spustenie_Threadu";
 
 HANDLE mutexOnThreadSafe;
 
@@ -25,16 +26,7 @@ private:
 public:
     vector < vector<string> > vector2D;
     Matrix() {
-       myFile.open("D:\\App Windows\\Visual Studio 2019\\Projekty\\HookDetours\\Hook\\x64\\Debug\\configuration.txt", ofstream::app);
-        vect.push_back("Function");
-        vect.push_back("stav_0");
-        vect.push_back("stav_1");
-        vect.push_back("stav_2");
-        vect.push_back("stav_3");
-        vect.push_back("stav_4");
-        vect.push_back("stav_5");
-        vector2D.push_back(vect);
-        vect.clear();
+        myFile.open("D:\\App Windows\\Visual Studio 2019\\Projekty\\HookDetours\\Hook\\x64\\Debug\\configuration.txt", ofstream::app);
         int flag = 6;
         while (!myFile.eof())
         {
@@ -152,13 +144,13 @@ list<string> findInApi(list<string> arraylist) {
 
 int main()
 {
-	mutexOnThreadSafe = CreateMutex(NULL, FALSE, TEXT("MutexOnThreadSafe"));
+    mutexOnThreadSafe = CreateMutex(NULL, FALSE, TEXT("MutexOnThreadSafe"));
 
     if (mutexOnThreadSafe != NULL)
     {
         cout << "Mutex created" << std::endl;
     }
-    
+
     size_t row_size;
     size_t col_size;
 
@@ -175,28 +167,31 @@ int main()
     }
 
     list<string> arraylist;
-    string status = "stav_0";
-    arraylist.push_back(status);
+    string status = "start";
+    arraylist.push_back(STATUS_S0);
 
     thread th([&matrix, &arraylist]() {
-		while (true) {
-			this_thread::sleep_for(500ms); 
+        while (true) {
+            this_thread::sleep_for(500ms);
 
-			auto result = WaitForSingleObject(mutexOnThreadSafe, INFINITE);
+            auto result = WaitForSingleObject(mutexOnThreadSafe, INFINITE);
 
-			if (result == WAIT_OBJECT_0)
-			{
-				arraylist = findInApi(arraylist);
+            if (result == WAIT_OBJECT_0)
+            {
+                arraylist = findInApi(arraylist);
 
-				for (int k = 0; k < arraylist.size(); k++) {
-					auto iter = next(arraylist.begin(), k);
-					cout << *iter << endl;
-				}
+                for (int k = 0; k < arraylist.size(); k++) {
+                    auto iter = next(arraylist.begin(), k);
+                    cout << *iter << endl;
+                    if (STATUS_S5._Equal(*iter)) {
+                        cout << "Process Hollowing exist" << endl;
+                    }
+                }
 
-				ReleaseMutex(mutexOnThreadSafe);
-			}
-		}
-    });
+                ReleaseMutex(mutexOnThreadSafe);
+            }
+        }
+        });
 
     th.join();
 }
