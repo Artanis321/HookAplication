@@ -11,8 +11,9 @@ int main(int argc, char* argv[])
 	HFILE hFile;
 	char buffer_read[60];
 	DWORD bytes_read = 0;
-
-	if (!CreateProcess(TEXT("D:\\App Windows\\Visual Studio 2019\\Projekty\\HookDetours\\Hook\\x64\\Debug\\RFApp.exe"), NULL, NULL, NULL, TRUE, CREATE_SUSPENDED, NULL, NULL, startupInfo, processInfo))
+//D:\\App Windows\\Visual Studio 2019\\Projekty\\Hollowing\\ProcessHollowing32-64\\x64\\Debug\\ProcessHollowing.exe
+	if (!CreateProcess(TEXT("D:\\App Windows\\Visual Studio 2019\\Projekty\\Hollowing\\ProcessHollowing32-64\\x64\\Debug\\ProcessHollowing.exe"), 
+		NULL, NULL, NULL, TRUE, CREATE_SUSPENDED, NULL, NULL, startupInfo, processInfo))
 	{
 		std::cout << "Nepodarilo sa spustit RFApp.exe" << std::endl;
 		return -1;

@@ -7,6 +7,9 @@
 #include <string>
 #include <mutex>
 #include <stdlib.h>
+#include <winternl.h>
+
+#pragma comment(lib,"ntdll.lib")
 
 using namespace std;
 #define _CRT_SECURE_NO_WARNINGS
@@ -52,6 +55,19 @@ static VOID(*RealExitThread)(DWORD) = ExitThread;
 static DWORD(*RealGetThreadId)(HANDLE) = GetThreadId;
 static BOOL (*RealGetThreadContext)(HANDLE, LPCONTEXT) = GetThreadContext;
 
+EXTERN_C NTSTATUS NTAPI NtReadVirtualMemory(HANDLE, PVOID, PVOID, ULONG, PULONG);
+EXTERN_C NTSTATUS NTAPI NtWriteVirtualMemory(HANDLE, PVOID, PVOID, ULONG, PULONG);
+EXTERN_C NTSTATUS NTAPI NtGetContextThread(HANDLE, PCONTEXT);
+EXTERN_C NTSTATUS NTAPI NtSetContextThread(HANDLE, PCONTEXT);
+EXTERN_C NTSTATUS NTAPI NtUnmapViewOfSection(HANDLE, PVOID);
+EXTERN_C NTSTATUS NTAPI NtResumeThread(HANDLE, PULONG);
+
+static NTSTATUS(*RealNtReadVirtualMemory)(HANDLE, PVOID, PVOID, ULONG, PULONG) = NtReadVirtualMemory;
+static NTSTATUS(*RealNtWriteVirtualMemory)(HANDLE, PVOID, PVOID, ULONG, PULONG) = NtWriteVirtualMemory;
+static NTSTATUS(*RealNtGetContextThread)(HANDLE, PCONTEXT) = NtGetContextThread;
+static NTSTATUS(*RealNtSetContextThread)(HANDLE, PCONTEXT) = NtSetContextThread;
+static NTSTATUS(*RealNtResumeThread)(HANDLE, PULONG) = NtResumeThread;
+
 /*
 fakeWriteProcessMemory			hookFakeWpm;
 fakeReadProcessMemory			hookFakeRpm;
@@ -72,6 +88,57 @@ fakeReadFile					hookFakeReadFile;
 fakeWriteFile					hookFakeWriteFile;
 */
 
+NTSTATUS WINAPI HookNtReadVirtualMemory(
+	HANDLE	hProcess,
+	PVOID	pBaseAddress,
+	PVOID	buffer,
+	ULONG	numberOfBytestoRead,
+	PULONG	numberOfBytesReaded OPTIONAL
+	)
+{
+	writeFile("NtReadVirtualMemory");
+	return RealNtReadVirtualMemory(hProcess, pBaseAddress, buffer, numberOfBytestoRead, numberOfBytesReaded);
+}
+
+NTSTATUS WINAPI HookNtWriteVirtualMemory(
+	HANDLE	hProcess,
+	PVOID	pBaseAddress,
+	PVOID	buffer,
+	ULONG	numberOfBytestoWrite,
+	PULONG	numberOfBytesWritend OPTIONAL
+	)
+{
+	writeFile("NtWriteVirtualMemory");
+	return RealNtWriteVirtualMemory(hProcess, pBaseAddress, buffer, numberOfBytestoWrite, numberOfBytesWritend);
+}
+
+NTSTATUS WINAPI HookNtSetContextThread(
+	HANDLE hThread,
+	PCONTEXT context
+	) 
+{
+	writeFile("SetContextThread");
+	return RealNtSetContextThread(hThread, context);
+}
+
+NTSTATUS WINAPI HookNtGetContextThread(
+	HANDLE hThread,
+	PCONTEXT context
+	)
+{
+	writeFile("GetContextThread");
+	return RealNtGetContextThread(hThread, context);
+}
+
+NTSTATUS WINAPI HookNtResumeThread(
+	HANDLE hThread,
+	PULONG suspendCount OPTIONAL
+	) 
+{
+	writeFile("NtResumeThread");
+	return RealNtResumeThread(hThread, suspendCount);
+}
+
 
 //this will replace the DeleteFileA function in our target process
 BOOL WINAPI HookWriteProcessMemory(
@@ -83,8 +150,6 @@ BOOL WINAPI HookWriteProcessMemory(
 	)
 {
 	writeFile("WriteProcessMemory");
-
-	//musi vravcat originalnu funkciu
 	return RealWriteProcessMemory(hProcess, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesWritten); //if the parameter does not contain this string, call the original API function
 }
 
@@ -97,8 +162,6 @@ BOOL WINAPI HookReadProcessMemory(
 	)
 {
 	writeFile("ReadProcessMemory");
-
-
 	return RealReadProcessMemory(hProcess, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesRead); //if the parameter does not contain this string, call the original API function
 }
 
