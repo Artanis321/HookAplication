@@ -10,4 +10,6 @@
 // add headers that you want to pre-compile here
 #include "framework.h"
 
+extern HANDLE hMutex;
+
 #endif //PCH_H

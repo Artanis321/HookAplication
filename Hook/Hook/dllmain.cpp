@@ -4,11 +4,15 @@
 #include <iostream>
 #include "ApiHookFunction.h"
 
+HANDLE hMutex;
+
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved
                      )
 {
+
+    hMutex = OpenMutex(MUTEX_ALL_ACCESS, NULL, TEXT("MutexOnThreadSafe"));
     
     switch (ul_reason_for_call)
     {
@@ -16,7 +20,6 @@ BOOL APIENTRY DllMain( HMODULE hModule,
         {
             DetourTransactionBegin();
             DetourUpdateThread(GetCurrentThread());
-            DetourAttach(&(PVOID&)RealReadFile, HookReadFile);
             DetourAttach(&(PVOID&)RealWriteProcessMemory, HookWriteProcessMemory);
             DetourAttach(&(PVOID&)RealReadProcessMemory, HookReadProcessMemory);
             DetourAttach(&(PVOID&)RealVirtualAllocEx, HookVirtualAllocEx);
@@ -30,14 +33,6 @@ BOOL APIENTRY DllMain( HMODULE hModule,
             DetourAttach(&(PVOID&)RealCreateProcessA, HookCreateProcessA);
             DetourAttach(&(PVOID&)RealCreateProcessW, HookCreateProcessW);
             DetourAttach(&(PVOID&)RealSetThreadContext, HookSetThreadContext);
-            /*
-            DetourAttach(&(PVOID&)RealNtReadVirtualMemory, HookNtReadVirtualMemory);
-            DetourAttach(&(PVOID&)RealNtWriteVirtualMemory, HookNtWriteVirtualMemory);
-            DetourAttach(&(PVOID&)RealNtGetContextThread, HookNtGetContextThread);
-            DetourAttach(&(PVOID&)RealNtSetContextThread, HookNtSetContextThread);
-            DetourAttach(&(PVOID&)RealNtResumeThread, HookNtResumeThread);
-            */
-            //DetourAttach(&(PVOID&)RealCreateFileW, HookCreateFileW);
             DetourTransactionCommit();
             break;
         }
@@ -45,7 +40,6 @@ BOOL APIENTRY DllMain( HMODULE hModule,
         {
             DetourTransactionBegin();
             DetourUpdateThread(GetCurrentThread());
-            DetourDetach(&(PVOID&)RealReadFile, HookReadFile);
             DetourDetach(&(PVOID&)RealWriteProcessMemory, HookWriteProcessMemory);
             DetourDetach(&(PVOID&)RealReadProcessMemory, HookReadProcessMemory);
             DetourDetach(&(PVOID&)RealVirtualAllocEx, HookVirtualAllocEx);
@@ -59,14 +53,6 @@ BOOL APIENTRY DllMain( HMODULE hModule,
             DetourDetach(&(PVOID&)RealCreateProcessA, HookCreateProcessA);
             DetourDetach(&(PVOID&)RealCreateProcessW, HookCreateProcessW);
             DetourDetach(&(PVOID&)RealSetThreadContext, HookSetThreadContext);
-            /*
-            DetourDetach(&(PVOID&)RealNtReadVirtualMemory, HookNtReadVirtualMemory);
-            DetourDetach(&(PVOID&)RealNtWriteVirtualMemory, HookNtWriteVirtualMemory);
-            DetourDetach(&(PVOID&)RealNtGetContextThread, HookNtGetContextThread);
-            DetourDetach(&(PVOID&)RealNtSetContextThread, HookNtSetContextThread);
-            DetourDetach(&(PVOID&)RealNtResumeThread, HookNtResumeThread);
-            */
-            //DetourDetach(&(PVOID&)RealCreateFileW, HookCreateFileW);
             DetourTransactionCommit();
             break;
         }
