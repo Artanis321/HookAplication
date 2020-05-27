@@ -6,13 +6,15 @@ int main(int argc, char* argv[])
 {
 	LPSTARTUPINFO startupInfo = new STARTUPINFO();
 	LPPROCESS_INFORMATION processInfo = new PROCESS_INFORMATION();
-	const char* dll_path = "D:\\App Windows\\Visual Studio 2019\\Projekty\\HookDetours\\Hook\\x64\\Debug\\Hook.dll";
+	const char* dll_path = "D:\\App Windows\\Visual Studio 2019\\Projekty\\HookDetours\\Hook\\Debug\\Hook.dll";
 	DWORD thread_id = 0;
 	HFILE hFile;
 	char buffer_read[60];
 	DWORD bytes_read = 0;
 //D:\\App Windows\\Visual Studio 2019\\Projekty\\Hollowing\\ProcessHollowing32-64\\x64\\Debug\\ProcessHollowing.exe
-	if (!CreateProcess(TEXT("D:\\App Windows\\Visual Studio 2019\\Projekty\\Hollowing\\ProcessHollowing32-64\\x64\\Debug\\ProcessHollowing.exe"), 
+//D:\\App Windows\\Visual Studio 2019\\Projekty\\Hollowing\ProcessHollowing32 - 64\x64\Debug
+//D:\App Windows\Visual Studio 2019\Projekty\ProcessHollowing\Process - Hollowing\executables
+	if (!CreateProcess(TEXT("D:\\App Windows\\Visual Studio 2019\\Projekty\\ProcessHollowing\\Process-Hollowing\\executables\\ProcessHollowing.exe"), 
 		NULL, NULL, NULL, TRUE, CREATE_SUSPENDED, NULL, NULL, startupInfo, processInfo))
 	{
 		std::cout << "Nepodarilo sa spustit RFApp.exe" << std::endl;

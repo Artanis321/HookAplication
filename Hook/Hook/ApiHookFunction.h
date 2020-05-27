@@ -8,6 +8,7 @@
 #include <mutex>
 #include <stdlib.h>
 #include <winternl.h>
+#include <winnt.rh>
 
 #pragma comment(lib,"ntdll.lib")
 
@@ -32,42 +33,58 @@ int writeFile(string originalFuncion) {
 
 }
 
-static BOOL(*RealWriteProcessMemory)(HANDLE, LPVOID, LPCVOID, SIZE_T, SIZE_T*) = WriteProcessMemory;
-static BOOL(*RealReadProcessMemory)(HANDLE, LPCVOID, LPVOID, SIZE_T, SIZE_T*) = ReadProcessMemory;
-static LPVOID(*RealVirtualAllocEx)(HANDLE, LPVOID, SIZE_T, DWORD, DWORD) = VirtualAllocEx;
-static LPVOID(*RealVirtualAlloc)(LPVOID, SIZE_T, DWORD, DWORD) = VirtualAlloc;
+static BOOL(__stdcall *RealWriteProcessMemory)(HANDLE, LPVOID, LPCVOID, SIZE_T, SIZE_T*) = WriteProcessMemory;
+static BOOL(__stdcall *RealReadProcessMemory)(HANDLE, LPCVOID, LPVOID, SIZE_T, SIZE_T*) = ReadProcessMemory;
+static LPVOID(__stdcall *RealVirtualAllocEx)(HANDLE, LPVOID, SIZE_T, DWORD, DWORD) = VirtualAllocEx;
+static LPVOID(__stdcall*RealVirtualAlloc)(LPVOID, SIZE_T, DWORD, DWORD) = VirtualAlloc;
 //static PVOID(*RealVirtualAlloc2)(HANDLE, PVOID, SIZE_T, ULONG, ULONG, MEM_EXTENDED_PARAMETER*, ULONG) = VirtualAlloc2;
-static HANDLE(*RealCreateThread)(LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, LPVOID, DWORD, LPDWORD) = CreateThread;
-static HANDLE(*RealCreateRemoteThread)(HANDLE, LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, LPVOID, DWORD, LPDWORD) = CreateRemoteThread;
-static HANDLE(*RealCreateRemoteThreadEx)(HANDLE, LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, LPVOID, 
+static HANDLE(__stdcall *RealCreateThread)(LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, LPVOID, DWORD, LPDWORD) = CreateThread;
+static HANDLE(__stdcall*RealCreateRemoteThread)(HANDLE, LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, LPVOID, DWORD, LPDWORD) = CreateRemoteThread;
+static HANDLE(__stdcall *RealCreateRemoteThreadEx)(HANDLE, LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, LPVOID,
 	DWORD, LPPROC_THREAD_ATTRIBUTE_LIST, LPDWORD) = CreateRemoteThreadEx;
-static BOOL(*RealReadFile)(HANDLE, LPVOID, DWORD, LPDWORD, LPOVERLAPPED) = ReadFile;
-static BOOL(*RealWriteFile)(HANDLE, LPCVOID, DWORD, LPDWORD, LPOVERLAPPED) = WriteFile;
-static HANDLE(*RealOpenProcess)(DWORD, BOOL, DWORD) = OpenProcess;
-static HANDLE(*RealOpenThread)(DWORD, BOOL, DWORD) = OpenThread;
-static DWORD(*RealResumeThread)(HANDLE) = ResumeThread;
-static BOOL(*RealCreateProcessA)(LPCSTR, LPSTR, LPSECURITY_ATTRIBUTES, LPSECURITY_ATTRIBUTES,
+static BOOL(__stdcall *RealReadFile)(HANDLE, LPVOID, DWORD, LPDWORD, LPOVERLAPPED) = ReadFile;
+static BOOL(__stdcall *RealWriteFile)(HANDLE, LPCVOID, DWORD, LPDWORD, LPOVERLAPPED) = WriteFile;
+static HANDLE(__stdcall *RealOpenProcess)(DWORD, BOOL, DWORD) = OpenProcess;
+static HANDLE(__stdcall *RealOpenThread)(DWORD, BOOL, DWORD) = OpenThread;
+static DWORD(__stdcall *RealResumeThread)(HANDLE) = ResumeThread;
+static BOOL(__stdcall *RealCreateProcessA)(LPCSTR, LPSTR, LPSECURITY_ATTRIBUTES, LPSECURITY_ATTRIBUTES,
 	BOOL, DWORD, LPVOID, LPCSTR, LPSTARTUPINFOA, LPPROCESS_INFORMATION) = CreateProcessA;
-static BOOL(*RealCreateProcessW)(LPCWSTR, LPWSTR, LPSECURITY_ATTRIBUTES, LPSECURITY_ATTRIBUTES,
+static BOOL(__stdcall *RealCreateProcessW)(LPCWSTR, LPWSTR, LPSECURITY_ATTRIBUTES, LPSECURITY_ATTRIBUTES,
 	BOOL, DWORD, LPVOID, LPCWSTR, LPSTARTUPINFOW, LPPROCESS_INFORMATION) = CreateProcessW;
-static VOID(*RealExitProcess)(UINT) = ExitProcess;
-static VOID(*RealExitThread)(DWORD) = ExitThread;
-static DWORD(*RealGetThreadId)(HANDLE) = GetThreadId;
-static BOOL (*RealGetThreadContext)(HANDLE, LPCONTEXT) = GetThreadContext;
-
+static VOID(__stdcall *RealExitProcess)(UINT) = ExitProcess;
+static VOID(__stdcall *RealExitThread)(DWORD) = ExitThread;
+static DWORD(__stdcall *RealGetThreadId)(HANDLE) = GetThreadId;
+static BOOL (__stdcall *RealGetThreadContext)(HANDLE, LPCONTEXT) = GetThreadContext;
+static BOOL(__stdcall* RealSetThreadContext)(HANDLE, const CONTEXT*) = SetThreadContext;
+//static HANDLE(*RealCreateFileW)(LPCWSTR, DWORD, DWORD, LPSECURITY_ATTRIBUTES, DWORD, DWORD, HANDLE) = CreateFileW;
+/*
 EXTERN_C NTSTATUS NTAPI NtReadVirtualMemory(HANDLE, PVOID, PVOID, ULONG, PULONG);
 EXTERN_C NTSTATUS NTAPI NtWriteVirtualMemory(HANDLE, PVOID, PVOID, ULONG, PULONG);
 EXTERN_C NTSTATUS NTAPI NtGetContextThread(HANDLE, PCONTEXT);
 EXTERN_C NTSTATUS NTAPI NtSetContextThread(HANDLE, PCONTEXT);
 EXTERN_C NTSTATUS NTAPI NtUnmapViewOfSection(HANDLE, PVOID);
 EXTERN_C NTSTATUS NTAPI NtResumeThread(HANDLE, PULONG);
+*/
+/*
+typedef NTSYSAPI NTSTATUS(NTAPI* tNtReadVirtualMemory)(HANDLE ProcessHandle, PVOID BaseAddress, PVOID Buffer, ULONG NumberOfBytesToRead, PULONG NumberOfBytesReaded);
+tNtReadVirtualMemory NtReadVirtualMemory;
+typedef NTSYSAPI NTSTATUS(NTAPI* tNtWriteVirtualMemory)(HANDLE ProcessHandle, PVOID BaseAddress, PVOID Buffer, ULONG NumberOfBytesToWrite, PULONG NumberOfBytesWrote);
+tNtWriteVirtualMemory NtWriteVirtualMemory;
+typedef NTSYSAPI NTSTATUS(NTAPI* tNtSetContextThread)(HANDLE ProcessHandle, PCONTEXT context);
+tNtSetContextThread NtSetContextThread;
+typedef NTSYSAPI NTSTATUS(NTAPI* tNtGetContextThread)(HANDLE ProcessHandle, PCONTEXT context);
+tNtGetContextThread NtGetContextThread;
+typedef NTSYSAPI NTSTATUS(NTAPI* tNtResumeThread)(HANDLE ProcessHandle, PULONG context);
+tNtResumeThread NtResumeThread;
 
-static NTSTATUS(*RealNtReadVirtualMemory)(HANDLE, PVOID, PVOID, ULONG, PULONG) = NtReadVirtualMemory;
-static NTSTATUS(*RealNtWriteVirtualMemory)(HANDLE, PVOID, PVOID, ULONG, PULONG) = NtWriteVirtualMemory;
-static NTSTATUS(*RealNtGetContextThread)(HANDLE, PCONTEXT) = NtGetContextThread;
-static NTSTATUS(*RealNtSetContextThread)(HANDLE, PCONTEXT) = NtSetContextThread;
-static NTSTATUS(*RealNtResumeThread)(HANDLE, PULONG) = NtResumeThread;
+//NtReadVirtualMemory = (tNtReadVirtualMemory)GetProcAddress(GetModuleHandle(TEXT("ntdll.dll")), "NtReadVirtualMemory");
 
+static NTSTATUS(*RealNtReadVirtualMemory)(HANDLE, PVOID, PVOID, ULONG, PULONG) = (tNtReadVirtualMemory)GetProcAddress(GetModuleHandle(TEXT("ntdll.dll")), "NtReadVirtualMemory");
+static NTSTATUS(*RealNtWriteVirtualMemory)(HANDLE, PVOID, PVOID, ULONG, PULONG) = (tNtWriteVirtualMemory)GetProcAddress(GetModuleHandle(TEXT("ntdll.dll")), "NtWriteVirtualMemory");
+static NTSTATUS(*RealNtGetContextThread)(HANDLE, PCONTEXT) = (tNtGetContextThread)GetProcAddress(GetModuleHandle(TEXT("ntdll.dll")), "NtGetContextThread");
+static NTSTATUS(*RealNtSetContextThread)(HANDLE, PCONTEXT) = (tNtSetContextThread)GetProcAddress(GetModuleHandle(TEXT("ntdll.dll")), "NtSetContextThread");
+static NTSTATUS(*RealNtResumeThread)(HANDLE, PULONG) = (tNtResumeThread)GetProcAddress(GetModuleHandle(TEXT("ntdll.dll")), "NtResumeThread");
+*/
 /*
 fakeWriteProcessMemory			hookFakeWpm;
 fakeReadProcessMemory			hookFakeRpm;
@@ -87,7 +104,22 @@ fakeCreateProcessA				hookFakeCrProcA;
 fakeReadFile					hookFakeReadFile;
 fakeWriteFile					hookFakeWriteFile;
 */
-
+/*
+HANDLE WINAPI HookCreateFileW(
+	LPCWSTR               lpFileName,
+	DWORD                 dwDesiredAccess,
+	DWORD                 dwShareMode,
+	LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+	DWORD                 dwCreationDisposition,
+	DWORD                 dwFlagsAndAttributes,
+	HANDLE                hTemplateFile
+	)
+{
+	writeFile("CreateFileW");
+	return RealCreateFileW(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
+}
+*/
+/*
 NTSTATUS WINAPI HookNtReadVirtualMemory(
 	HANDLE	hProcess,
 	PVOID	pBaseAddress,
@@ -138,7 +170,16 @@ NTSTATUS WINAPI HookNtResumeThread(
 	writeFile("NtResumeThread");
 	return RealNtResumeThread(hThread, suspendCount);
 }
+*/
 
+BOOL WINAPI HookSetThreadContext(
+	HANDLE        hThread,
+	const CONTEXT* lpContext
+)
+{
+	writeFile("SetThreadContext");
+	return RealSetThreadContext(hThread, lpContext);
+}
 
 //this will replace the DeleteFileA function in our target process
 BOOL WINAPI HookWriteProcessMemory(

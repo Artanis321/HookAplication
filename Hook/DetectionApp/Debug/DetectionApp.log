@@ -1,0 +1,6 @@
+﻿  DetectionApp.cpp
+D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\DetectionApp\DetectionApp.cpp(67,27): warning C4018: '<': signed/unsigned mismatch
+D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\DetectionApp\DetectionApp.cpp(79,27): warning C4018: '<': signed/unsigned mismatch
+D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\DetectionApp\DetectionApp.cpp(82,35): warning C4018: '<': signed/unsigned mismatch
+D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\DetectionApp\DetectionApp.cpp(183,35): warning C4018: '<': signed/unsigned mismatch
+  DetectionApp.vcxproj -> D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\Debug\DetectionApp.exe
