@@ -27,9 +27,13 @@ int writeFile(string originalFuncion)
 		tm* ltm = localtime(&now);
 		ofstream myFile;
 		myFile.open("hookAplicationResult.txt", ofstream::app | ofstream::out);
-		myFile << ltm->tm_hour << ":" << ltm->tm_min << ":" << ltm->tm_sec << ";" + originalFuncion << endl;
-		myFile.close();
-		cin.ignore();
+
+		if (myFile.is_open())
+		{
+			myFile << ltm->tm_hour << ":" << ltm->tm_min << ":" << ltm->tm_sec << ";" + originalFuncion << endl;
+			myFile.close();
+		}
+
 		ReleaseMutex(hMutex);
 	}
 
