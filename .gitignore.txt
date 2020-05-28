@@ -1,0 +1,11 @@
+[Xx]64/
+[Rr]elease/
+.vs/
+
+*.suo
+*.user
+*.obj
+*.log
+*.ilk
+*.pdb
+*.VC.db
