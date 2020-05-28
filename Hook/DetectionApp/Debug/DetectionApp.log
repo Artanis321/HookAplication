@@ -1,6 +1,4 @@
 ﻿  DetectionApp.cpp
-D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\DetectionApp\DetectionApp.cpp(67,27): warning C4018: '<': signed/unsigned mismatch
-D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\DetectionApp\DetectionApp.cpp(79,27): warning C4018: '<': signed/unsigned mismatch
-D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\DetectionApp\DetectionApp.cpp(82,35): warning C4018: '<': signed/unsigned mismatch
-D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\DetectionApp\DetectionApp.cpp(183,35): warning C4018: '<': signed/unsigned mismatch
+D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\DetectionApp\DetectionApp.cpp(196,14): warning C4101: 'buffer': unreferenced local variable
+D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\DetectionApp\DetectionApp.cpp(150,10): warning C4101: 'buffer_read': unreferenced local variable
   DetectionApp.vcxproj -> D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\Debug\DetectionApp.exe

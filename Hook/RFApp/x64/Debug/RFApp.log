@@ -1,3 +1,0 @@
-﻿  main.cpp
-D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\RFApp\main.cpp(12,72): warning C4267: 'argument': conversion from 'size_t' to 'DWORD', possible loss of data
-  RFApp.vcxproj -> D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\x64\Debug\RFApp.exe

@@ -55,7 +55,7 @@ static VOID(__stdcall *RealExitProcess)(UINT) = ExitProcess;
 static VOID(__stdcall *RealExitThread)(DWORD) = ExitThread;
 static DWORD(__stdcall *RealGetThreadId)(HANDLE) = GetThreadId;
 static BOOL (__stdcall *RealGetThreadContext)(HANDLE, LPCONTEXT) = GetThreadContext;
-static BOOL(__stdcall* RealSetThreadContext)(HANDLE, const CONTEXT*) = SetThreadContext;
+static BOOL(__stdcall *RealSetThreadContext)(HANDLE, const CONTEXT*) = SetThreadContext;
 
 BOOL WINAPI HookSetThreadContext(
 	HANDLE        hThread,
