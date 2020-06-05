@@ -16,7 +16,7 @@ using namespace std;
 #define _CRT_SECURE_NO_WARNINGS
 #pragma warning(disable : 4996)
 
-int writeFile(string originalFuncion) 
+void writeFunctionToFile(string originalFuncion) 
 {
 	DWORD ret = WaitForSingleObject(hMutex, INFINITE);
 
@@ -36,8 +36,6 @@ int writeFile(string originalFuncion)
 
 		ReleaseMutex(hMutex);
 	}
-
-	return 0;
 }
 
 static BOOL(__stdcall *RealWriteProcessMemory)(HANDLE, LPVOID, LPCVOID, SIZE_T, SIZE_T*) = WriteProcessMemory;
@@ -66,7 +64,7 @@ BOOL WINAPI HookSetThreadContext(
 	const CONTEXT* lpContext
 )
 {
-	writeFile("SetThreadContext");
+	writeFunctionToFile("SetThreadContext");
 	return RealSetThreadContext(hThread, lpContext);
 }
 
@@ -79,7 +77,7 @@ BOOL WINAPI HookWriteProcessMemory(
 	_Out_ SIZE_T  *lpNumberOfBytesWritten
 	)
 {
-	writeFile("WriteProcessMemory");
+	writeFunctionToFile("WriteProcessMemory");
 	return RealWriteProcessMemory(hProcess, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesWritten); //if the parameter does not contain this string, call the original API function
 }
 
@@ -91,7 +89,7 @@ BOOL WINAPI HookReadProcessMemory(
 	_Out_ SIZE_T  *lpNumberOfBytesRead
 	)
 {
-	writeFile("ReadProcessMemory");
+	writeFunctionToFile("ReadProcessMemory");
 	return RealReadProcessMemory(hProcess, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesRead); //if the parameter does not contain this string, call the original API function
 }
 
@@ -103,7 +101,7 @@ LPVOID WINAPI HookVirtualAllocEx(
 	_In_ DWORD  flProtect
 )
 {
-	writeFile("VirtualAllocEx");
+	writeFunctionToFile("VirtualAllocEx");
 	return RealVirtualAllocEx(hProcess, lpAddress, dwSize, flAllocationType, flProtect);
 }
 
@@ -126,7 +124,7 @@ HANDLE WINAPI HookCreateRemoteThread(
 	LPDWORD                lpThreadId
 )
 {
-	writeFile("CreateRemoteThread");
+	writeFunctionToFile("CreateRemoteThread");
 	return RealCreateRemoteThread(hProcess, lpThreadAttributes, dwStackSize, lpStartAddress, lpParameter, dwCreationFlags, lpThreadId);
 }
 
@@ -141,7 +139,7 @@ HANDLE WINAPI HookCreateRemoteThreadEx(
 	LPDWORD                      lpThreadId
 )
 {
-	writeFile("CreateRemoteThreadEx");
+	writeFunctionToFile("CreateRemoteThreadEx");
 	return RealCreateRemoteThreadEx(hProcess, lpThreadAttributes, dwStackSize, lpStartAddress, lpParameter, dwCreationFlags, lpAttributeList, lpThreadId);
 }
 
@@ -151,7 +149,7 @@ HANDLE WINAPI HookOpenProcess(
 	DWORD dwProcessId
 )
 {
-	writeFile("OpenProcess");
+	writeFunctionToFile("OpenProcess");
 	return RealOpenProcess(dwDesiredAccess, bInheritHandle, dwProcessId);
 }
 
@@ -161,7 +159,7 @@ HANDLE WINAPI HookOpenThread(
 	DWORD dwThreadId
 )
 {
-	writeFile("OpenThread");
+	writeFunctionToFile("OpenThread");
 	return RealOpenThread(dwDesiredAccess, bInheritHandle, dwThreadId);
 }
 
@@ -169,7 +167,7 @@ DWORD WINAPI HookResumeThread(
 	HANDLE hThread
 )
 {
-	writeFile("ResumeThread");
+	writeFunctionToFile("ResumeThread");
 	return RealResumeThread(hThread);
 }
 
@@ -186,7 +184,7 @@ BOOL WINAPI HookCreateProcessA(
 	LPPROCESS_INFORMATION lpProcessInformation
 )
 {
-	writeFile("CreateProcessA");
+	writeFunctionToFile("CreateProcessA");
 	return  RealCreateProcessA(lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles,
 		dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
 }
@@ -204,7 +202,7 @@ BOOL WINAPI HookCreateProcessW(
 	LPPROCESS_INFORMATION lpProcessInformation
 )
 {
-	writeFile("CreateProcessW");
+	writeFunctionToFile("CreateProcessW");
 	return RealCreateProcessW(lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles,
 		dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
 }

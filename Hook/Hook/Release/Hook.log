@@ -1,0 +1,7 @@
+﻿  pch.cpp
+  dllmain.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 204 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  Hook.vcxproj -> D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\Release\Hook.dll

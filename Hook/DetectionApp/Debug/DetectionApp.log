@@ -1,4 +1,4 @@
 ﻿  DetectionApp.cpp
-D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\DetectionApp\DetectionApp.cpp(196,14): warning C4101: 'buffer': unreferenced local variable
-D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\DetectionApp\DetectionApp.cpp(150,10): warning C4101: 'buffer_read': unreferenced local variable
+D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\DetectionApp\DetectionApp.cpp(219,14): warning C4101: 'buffer': unreferenced local variable
+D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\DetectionApp\DetectionApp.cpp(173,10): warning C4101: 'buffer_read': unreferenced local variable
   DetectionApp.vcxproj -> D:\App Windows\Visual Studio 2019\Projekty\HookDetours\Hook\Debug\DetectionApp.exe

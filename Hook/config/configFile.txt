@@ -1,0 +1,2 @@
+D:\\App_Windows\\Visual_Studio_2019\\Projekty\\HookDetours\\Hook\\Debug\\configuration.txt
+D:\\App_Windows\\Visual_Studio_2019\\Projekty\\ProcessHollowing\\Process-Hollowing\\executables\\ProcessHollowing.exe

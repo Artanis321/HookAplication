@@ -1,0 +1,4 @@
+11:47:30;CreateRemoteThreadEx
+11:47:30;ResumeThread
+11:47:30;CreateProcessA
+11:47:30;CreateProcessA

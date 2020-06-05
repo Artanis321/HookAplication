@@ -15,8 +15,34 @@ using namespace std;
 static const string STATUS_S0 = "start";
 static const string STATUS_S1 = "vytvorenie_Threadu";
 static const string STATUS_S5 = "spustenie_Threadu";
+static string CONFIG_FILE = "";
+static string APP_PATH = "";
+static const char* DLL_PATH = "";
 
 HANDLE mutexOnThreadSafe;
+
+void setConfig() {
+    ifstream configFile;
+    string line;
+    int flag = 0;
+    configFile.open("D:\\App Windows\\Visual Studio 2019\\Projekty\\HookDetours\\Hook\\config\\configFile.txt");
+    if (configFile.is_open())
+    {
+        while (!configFile.eof())
+        {
+            configFile >> line;
+            if (flag == 0)
+            {
+                CONFIG_FILE = line;
+            }
+            if (flag == 1)
+            {
+                APP_PATH = line;
+            }
+            flag++;
+        }
+    }
+}
 
 class Matrix {
 private:
@@ -26,7 +52,7 @@ private:
 public:
     vector < vector<string> > vector2D;
     Matrix() {
-        myFile.open("D:\\App Windows\\Visual Studio 2019\\Projekty\\HookDetours\\Hook\\x64\\Debug\\configuration.txt", ofstream::app);
+        myFile.open("configuration.txt", ofstream::app);
         int flag = 6;
         while (!myFile.eof())
         {
@@ -68,14 +94,11 @@ list<string> processHollowingEvaluation(list<string> arraylist, string winAPIFun
         if (winAPIFuncion._Equal(matrix.vector2D[row][0]))
         {
             row_index = row;
-            //cout << matrix.vector2D[row][0] << endl;
             exist = true;
         }
     }
     if (exist) {
         exist = false;
-        cout << "WinAPI: " << winAPIFuncion << " New Instance:" << endl;
-
         for (size_t k = 0; k < arraylist.size(); k++) {
             auto iter = next(arraylist.begin(), k);
             status = *iter;
@@ -145,15 +168,15 @@ list<string> findInApi(list<string> arraylist) {
 bool injectDll() {
     LPSTARTUPINFO startupInfo = new STARTUPINFO();
     LPPROCESS_INFORMATION processInfo = new PROCESS_INFORMATION();
-    const char* dll_path = "D:\\App Windows\\Visual Studio 2019\\Projekty\\HookDetours\\Hook\\Debug\\Hook.dll";
+    const char* dll_path = "Hook.dll";
     DWORD thread_id = 0;
     char buffer_read[60];
     DWORD bytes_read = 0;
 
-    if (!CreateProcess(TEXT("D:\\App Windows\\Visual Studio 2019\\Projekty\\ProcessHollowing\\Process-Hollowing\\sourcecode\\Debug\\ProcessHollowing.exe"),
+    if (!CreateProcess(TEXT("C:\\e75cc2ab8e398f05752faa6fa4b5c91e2f4a680a33d4d6aa41754a374313a8d4.exe"),
         NULL, NULL, NULL, TRUE, CREATE_SUSPENDED, NULL, NULL, startupInfo, processInfo))
     {
-        cout << "Nepodarilo sa spustit Aplikaciu .exe" << endl;
+        std::cout << "Nepodarilo sa spustit Aplikaciu .exe" << std::endl;
         return false;
     }
 
@@ -161,7 +184,7 @@ bool injectDll() {
 
     if (kernel == NULL)
     {
-        cout << "LoadLibrary fail" << endl;
+        std::cout << "LoadLibrary fail" << std::endl;
         return false;
     }
 
@@ -169,33 +192,33 @@ bool injectDll() {
 
     if (path == NULL)
     {
-        cout << "VirtualAllocEx fail" << endl;
+        std::cout << "VirtualAllocEx fail" << std::endl;
         return false;
     }
 
     SIZE_T written = 0;
     if (!WriteProcessMemory(processInfo->hProcess, path, dll_path, strlen(dll_path), &written))
     {
-        cout << "WriteProcessMemory failed" << endl;
+        std::cout << "WriteProcessMemory failed" << std::endl;
         return false;
     }
 
-    cout << "Written " << written << endl;
+    std::cout << "Written " << written << std::endl;
 
     HANDLE remote = CreateRemoteThread(processInfo->hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)GetProcAddress(kernel, "LoadLibraryA"), path, 0, &thread_id);
 
     if (remote == NULL)
     {
-        cout << "CreateRemoteThread fail" << endl;
+        std::cout << "CreateRemoteThread fail" << std::endl;
         return false;
     }
 
     DWORD ret = WaitForSingleObject(remote, INFINITE);
-    cout << "Return WaitForSingleObject " << ret << endl;
+    std::cout << "Return WaitForSingleObject " << ret << std::endl;
     ret = ResumeThread(processInfo->hThread);
     OFSTRUCT buffer;
 
-    cout << "Return ResumeThread " << ret << endl;
+    std::cout << "Return ResumeThread " << ret << std::endl;
     CloseHandle(remote);
     return true;
 }
@@ -206,12 +229,13 @@ int main()
 
     if (mutexOnThreadSafe != NULL)
     {
-        cout << "Mutex created" << std::endl;
+        std::cout << "Mutex created" << std::endl;
     }
 
+    //setConfig();
     if (!injectDll())
     {
-        cout << "Nepodarilo sa injectovat DLL" << endl;
+        std::cout << "Nepodarilo sa injectovat DLL" << std::endl;
         return 0;
     }
 
@@ -225,9 +249,9 @@ int main()
     {
         for (size_t j = 0; j < col_size; j++)
         {
-            cout << matrix.vector2D[i][j] << ' ';
+            std::cout << matrix.vector2D[i][j] << ' ';
         }
-        cout << endl;
+        std::cout << std::endl;
     }
 
     list<string> arraylist;
@@ -245,9 +269,10 @@ int main()
 
                 for (size_t k = 0; k < arraylist.size(); k++) {
                     auto iter = next(arraylist.begin(), k);
-                    cout << *iter << endl;
+                    std::cout << *iter << std::endl;
                     if (STATUS_S5._Equal(*iter)) {
-                        cout << "Process Hollowing exist" << endl;
+                        std::cout << "Process Hollowing exist" << std::endl;
+                        return 0;
                     }
                 }
 

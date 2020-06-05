@@ -23,7 +23,7 @@
     <ProjectGuid>{A48A729D-7A43-48C1-9D57-59B4F1617F9A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Hook</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -73,7 +73,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>C:\detours\Detours-master\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\detours\Detours-master\lib.X86;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\detours\Detours-master\lib.X86</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -83,7 +83,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>C:\detours\Detours-master\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\detours\Detours-master\lib.X64;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\detours\Detours-master\lib.X86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
