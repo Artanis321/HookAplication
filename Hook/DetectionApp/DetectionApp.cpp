@@ -173,7 +173,7 @@ bool injectDll() {
     char buffer_read[60];
     DWORD bytes_read = 0;
 
-    if (!CreateProcess(TEXT("C:\\e75cc2ab8e398f05752faa6fa4b5c91e2f4a680a33d4d6aa41754a374313a8d4.exe"),
+    if (!CreateProcess(TEXT("D:\\App Windows\\Visual Studio 2019\\Projekty\\ProcessHollowing\\Process-Hollowing\\executables\\ProcessHollowing.exe"),
         NULL, NULL, NULL, TRUE, CREATE_SUSPENDED, NULL, NULL, startupInfo, processInfo))
     {
         std::cout << "Nepodarilo sa spustit Aplikaciu .exe" << std::endl;

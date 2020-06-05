@@ -38,6 +38,16 @@ void writeFunctionToFile(string originalFuncion)
 	}
 }
 
+typedef NTSTATUS(WINAPI* _ZwUnmapViewOfSection)(
+	HANDLE ProcessHandle,
+	PVOID BaseAddress
+	);
+
+FARPROC fpZwUnmapViewOfSection = GetProcAddress(GetModuleHandleA("ntdll"), "ZwUnmapViewOfSection");
+
+_ZwUnmapViewOfSection ZwUnmapViewOfSection =
+(_ZwUnmapViewOfSection)fpZwUnmapViewOfSection;
+
 static BOOL(__stdcall *RealWriteProcessMemory)(HANDLE, LPVOID, LPCVOID, SIZE_T, SIZE_T*) = WriteProcessMemory;
 static BOOL(__stdcall *RealReadProcessMemory)(HANDLE, LPCVOID, LPVOID, SIZE_T, SIZE_T*) = ReadProcessMemory;
 static LPVOID(__stdcall *RealVirtualAllocEx)(HANDLE, LPVOID, SIZE_T, DWORD, DWORD) = VirtualAllocEx;
@@ -58,6 +68,16 @@ static VOID(__stdcall *RealExitThread)(DWORD) = ExitThread;
 static DWORD(__stdcall *RealGetThreadId)(HANDLE) = GetThreadId;
 static BOOL (__stdcall *RealGetThreadContext)(HANDLE, LPCONTEXT) = GetThreadContext;
 static BOOL(__stdcall *RealSetThreadContext)(HANDLE, const CONTEXT*) = SetThreadContext;
+static NTSTATUS (__stdcall *RealZwUnmapViewOfSection)(	HANDLE, PVOID) = ZwUnmapViewOfSection;
+
+NTSTATUS WINAPI HookZwUnmapViewOfSection(
+	HANDLE ProcessHandle,
+	PVOID  BaseAddress
+) 
+{
+	writeFunctionToFile("ZwUnmapViewOfSection");
+	return RealZwUnmapViewOfSection(ProcessHandle, BaseAddress);
+}
 
 BOOL WINAPI HookSetThreadContext(
 	HANDLE        hThread,

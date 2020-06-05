@@ -33,6 +33,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
             DetourAttach(&(PVOID&)RealCreateProcessA, HookCreateProcessA);
             DetourAttach(&(PVOID&)RealCreateProcessW, HookCreateProcessW);
             DetourAttach(&(PVOID&)RealSetThreadContext, HookSetThreadContext);
+            DetourAttach(&(PVOID&)RealZwUnmapViewOfSection, HookZwUnmapViewOfSection);
             DetourTransactionCommit();
             break;
         }
@@ -53,6 +54,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
             DetourDetach(&(PVOID&)RealCreateProcessA, HookCreateProcessA);
             DetourDetach(&(PVOID&)RealCreateProcessW, HookCreateProcessW);
             DetourDetach(&(PVOID&)RealSetThreadContext, HookSetThreadContext);
+            DetourDetach(&(PVOID&)RealZwUnmapViewOfSection, HookZwUnmapViewOfSection);
             DetourTransactionCommit();
             break;
         }
